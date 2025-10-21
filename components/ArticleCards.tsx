@@ -68,75 +68,139 @@ export function NewspaperCompactCard({
   onTap,
   index = 0,
 }: NewspaperCompactCardProps) {
-  const variant = index % 5;
+  const variant = index % 6;
 
-  // Brief (Text-only) - every 5th
+  // Large Feature (every 6th) - Big image top, prominent
   if (variant === 0) {
     return (
-      <Pressable onPress={onTap} style={styles.brief}>
-        <View style={styles.briefBar} />
-        <View style={styles.briefBody}>
-          <Text style={styles.briefTitle} numberOfLines={2}>
-            {article.title}
+      <Pressable onPress={onTap} style={styles.largeFeat}>
+        {article.imageUrl && (
+          <Image 
+            source={{ uri: article.imageUrl }} 
+            style={styles.largeFeatImage}
+            resizeMode="cover"
+          />
+        )}
+        {article.categories && article.categories.length > 0 && (
+          <View style={styles.largeFeatCategoryBox}>
+            <Text style={styles.largeFeatCategory}>
+              {article.categories[0].name.toUpperCase()}
+            </Text>
+          </View>
+        )}
+        <Text style={styles.largeFeatTitle} numberOfLines={3}>
+          {article.title}
+        </Text>
+        {article.excerpt && (
+          <Text style={styles.largeFeatExcerpt} numberOfLines={2}>
+            {article.excerpt}
           </Text>
-          <Text style={styles.briefMeta}>
-            {article.source?.name.toUpperCase() || 'STAFF'}
-          </Text>
+        )}
+        <View style={styles.largeFeatMeta}>
+          {article.author && (
+            <>
+              <Text style={styles.largeFeatAuthor}>{article.author}</Text>
+              <Text style={styles.metaDot}> · </Text>
+            </>
+          )}
+          <Text style={styles.largeFeatTime}>{getTimeAgo(article.publishedAt)}</Text>
+          {article.source && (
+            <>
+              <Text style={styles.metaDot}> · </Text>
+              <Text style={styles.largeFeatSource}>{article.source.name}</Text>
+            </>
+          )}
         </View>
       </Pressable>
     );
   }
 
-  // Feature (Big image) - every 4th (not 5th)
-  if (variant === 3) {
+  // Medium with Side Image (variants 1, 3, 4)
+  if (variant === 1 || variant === 3 || variant === 4) {
     return (
-      <Pressable onPress={onTap} style={styles.feature}>
-        {article.imageUrl && (
-          <View style={styles.featureImageBox}>
-            <Image source={{ uri: article.imageUrl }} style={styles.featureImage} />
+      <Pressable onPress={onTap} style={styles.mediumSide}>
+        <View style={styles.mediumSideRow}>
+          <View style={styles.mediumSideText}>
+            {article.categories && article.categories.length > 0 && (
+              <Text style={styles.mediumSideCategory}>
+                {article.categories[0].name.toUpperCase()}
+              </Text>
+            )}
+            <Text style={styles.mediumSideTitle} numberOfLines={4}>
+              {article.title}
+            </Text>
+            <View style={styles.mediumSideMeta}>
+              {article.author && (
+                <>
+                  <Text style={styles.mediumSideAuthor}>{article.author}</Text>
+                  <Text style={styles.metaDot}> · </Text>
+                </>
+              )}
+              <Text style={styles.mediumSideTime}>{getTimeAgo(article.publishedAt)}</Text>
+            </View>
           </View>
+          {article.imageUrl && (
+            <Image 
+              source={{ uri: article.imageUrl }} 
+              style={styles.mediumSideImage}
+              resizeMode="cover"
+            />
+          )}
+        </View>
+      </Pressable>
+    );
+  }
+
+  // Small with Top Image (variant 2)
+  if (variant === 2) {
+    return (
+      <Pressable onPress={onTap} style={styles.smallTop}>
+        {article.imageUrl && (
+          <Image 
+            source={{ uri: article.imageUrl }} 
+            style={styles.smallTopImage}
+            resizeMode="cover"
+          />
         )}
         {article.categories && article.categories.length > 0 && (
-          <Text style={styles.featureLabel}>
+          <Text style={styles.smallTopCategory}>
             {article.categories[0].name.toUpperCase()}
           </Text>
         )}
-        <Text style={styles.featureTitle} numberOfLines={3}>
+        <Text style={styles.smallTopTitle} numberOfLines={3}>
           {article.title}
         </Text>
-        <View style={styles.featureFooter}>
-          <Text style={styles.featureMeta}>
-            {article.source?.name || 'Staff'} · {getTimeAgo(article.publishedAt)}
-          </Text>
+        <View style={styles.smallTopMeta}>
+          {article.author && (
+            <>
+              <Text style={styles.smallTopAuthor}>{article.author}</Text>
+              <Text style={styles.metaDot}> · </Text>
+            </>
+          )}
+          <Text style={styles.smallTopTime}>{getTimeAgo(article.publishedAt)}</Text>
         </View>
       </Pressable>
     );
   }
 
-  // Standard (Side image)
+  // Brief Text-Heavy (variant 5)
   return (
-    <Pressable onPress={onTap} style={styles.standard}>
-      <View style={styles.standardBody}>
-        <View style={styles.standardText}>
-          {article.categories && article.categories.length > 0 && (
-            <View style={styles.standardLabel}>
-              <Text style={styles.standardLabelText}>
-                {article.categories[0].name.toUpperCase()}
-              </Text>
-            </View>
-          )}
-          <Text style={styles.standardTitle} numberOfLines={4}>
-            {article.title}
+    <Pressable onPress={onTap} style={styles.briefText}>
+      <View style={styles.briefBar} />
+      <View style={styles.briefContent}>
+        {article.categories && article.categories.length > 0 && (
+          <Text style={styles.briefCategory}>
+            {article.categories[0].name.toUpperCase()}
           </Text>
-          <Text style={styles.standardMeta} numberOfLines={1}>
-            {article.source?.name || 'Staff'} · {getTimeAgo(article.publishedAt)}
-          </Text>
-        </View>
-        {article.imageUrl && (
-          <View style={styles.standardImageBox}>
-            <Image source={{ uri: article.imageUrl }} style={styles.standardImage} />
-          </View>
         )}
+        <Text style={styles.briefTitle} numberOfLines={3}>
+          {article.title}
+        </Text>
+        <View style={styles.briefMeta}>
+          {article.source && (
+            <Text style={styles.briefSource}>{article.source.name}</Text>
+          )}
+        </View>
       </View>
     </Pressable>
   );
@@ -254,8 +318,180 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
 
-  // ========== BRIEF (Text-only) ==========
-  brief: {
+  // ========== SHARED ==========
+  metaDot: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray400,
+    fontSize: 8,
+  },
+
+  // ========== LARGE FEATURED (Every 6th) ==========
+  largeFeat: {
+    paddingBottom: AppSpacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.primaryText,
+  },
+  largeFeatImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: AppColors.gray200,
+    marginBottom: AppSpacing.sm,
+  },
+  largeFeatCategoryBox: {
+    alignSelf: 'flex-start',
+    backgroundColor: AppColors.primaryText,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginBottom: 6,
+  },
+  largeFeatCategory: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.surface,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    fontSize: 8,
+  },
+  largeFeatTitle: {
+    ...AppTextStyles.articleTitleLarge,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    lineHeight: 26,
+    letterSpacing: -0.5,
+    marginBottom: 8,
+    fontSize: 20,
+  },
+  largeFeatExcerpt: {
+    ...AppTextStyles.bodySmall,
+    color: AppColors.gray700,
+    lineHeight: 20,
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  largeFeatMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  largeFeatAuthor: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    fontSize: 11,
+  },
+  largeFeatTime: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontStyle: 'italic',
+    fontSize: 11,
+  },
+  largeFeatSource: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray500,
+    fontSize: 10,
+  },
+
+  // ========== MEDIUM WITH SIDE IMAGE (Variants 1, 3, 4) ==========
+  mediumSide: {
+    paddingVertical: AppSpacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.divider,
+  },
+  mediumSideRow: {
+    flexDirection: 'row',
+    gap: AppSpacing.sm,
+  },
+  mediumSideText: {
+    flex: 1,
+  },
+  mediumSideCategory: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    fontSize: 9,
+    marginBottom: 4,
+  },
+  mediumSideTitle: {
+    ...AppTextStyles.articleTitleMedium,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    lineHeight: 20,
+    letterSpacing: -0.3,
+    marginBottom: 6,
+    fontSize: 15,
+  },
+  mediumSideMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  mediumSideAuthor: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    fontSize: 10,
+  },
+  mediumSideTime: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontStyle: 'italic',
+    fontSize: 10,
+  },
+  mediumSideImage: {
+    width: 85,
+    height: 85,
+    backgroundColor: AppColors.gray200,
+  },
+
+  // ========== SMALL WITH TOP IMAGE (Variant 2) ==========
+  smallTop: {
+    paddingVertical: AppSpacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.divider,
+  },
+  smallTopImage: {
+    width: '100%',
+    height: 100,
+    backgroundColor: AppColors.gray200,
+    marginBottom: 6,
+  },
+  smallTopCategory: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    fontSize: 9,
+    marginBottom: 4,
+  },
+  smallTopTitle: {
+    ...AppTextStyles.articleTitleMedium,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    lineHeight: 19,
+    letterSpacing: -0.3,
+    marginBottom: 6,
+    fontSize: 14,
+  },
+  smallTopMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  smallTopAuthor: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    fontSize: 10,
+  },
+  smallTopTime: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontStyle: 'italic',
+    fontSize: 10,
+  },
+
+  // ========== BRIEF TEXT-HEAVY (Variant 5) ==========
+  briefText: {
     flexDirection: 'row',
     paddingVertical: AppSpacing.md,
     borderBottomWidth: 1,
@@ -266,8 +502,16 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.primaryText,
     marginRight: AppSpacing.sm,
   },
-  briefBody: {
+  briefContent: {
     flex: 1,
+  },
+  briefCategory: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.primaryText,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    fontSize: 9,
+    marginBottom: 4,
   },
   briefTitle: {
     ...AppTextStyles.articleTitleMedium,
@@ -275,115 +519,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 20,
     letterSpacing: -0.3,
-    marginBottom: AppSpacing.xs,
-    fontSize: 14,
+    marginBottom: 6,
+    fontSize: 15,
   },
   briefMeta: {
-    ...AppTextStyles.captionSmall,
-    color: AppColors.gray600,
-    fontWeight: '700',
-    letterSpacing: 1,
-    fontSize: 8,
-  },
-
-  // ========== FEATURE ==========
-  feature: {
-    paddingVertical: AppSpacing.lg,
-    borderBottomWidth: 2,
-    borderBottomColor: AppColors.primaryText,
-  },
-  featureImageBox: {
-    borderWidth: 2,
-    borderColor: AppColors.primaryText,
-    marginBottom: AppSpacing.md,
-  },
-  featureImage: {
-    width: '100%',
-    aspectRatio: 4 / 3,
-    backgroundColor: AppColors.gray200,
-  },
-  featureLabel: {
-    ...AppTextStyles.labelSmall,
-    color: AppColors.surface,
-    backgroundColor: AppColors.primaryText,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    fontSize: 9,
-    paddingHorizontal: AppSpacing.xs,
-    paddingVertical: 2,
-    alignSelf: 'flex-start',
-    marginBottom: AppSpacing.xs,
-  },
-  featureTitle: {
-    ...AppTextStyles.articleTitleLarge,
-    color: AppColors.primaryText,
-    fontWeight: '800',
-    lineHeight: 24,
-    letterSpacing: -0.5,
-    marginBottom: AppSpacing.sm,
-    fontSize: 18,
-  },
-  featureFooter: {
-    borderTopWidth: 1,
-    borderTopColor: AppColors.divider,
-    paddingTop: AppSpacing.xs,
-  },
-  featureMeta: {
-    ...AppTextStyles.captionSmall,
-    color: AppColors.gray600,
-    fontSize: 9,
-  },
-
-  // ========== STANDARD ==========
-  standard: {
-    paddingVertical: AppSpacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.divider,
-  },
-  standardBody: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
-  standardText: {
-    flex: 1,
-    paddingRight: AppSpacing.md,
-  },
-  standardLabel: {
-    borderWidth: 1,
-    borderColor: AppColors.primaryText,
-    paddingHorizontal: AppSpacing.xs,
-    paddingVertical: 1,
-    alignSelf: 'flex-start',
-    marginBottom: AppSpacing.xs,
-  },
-  standardLabelText: {
-    ...AppTextStyles.labelSmall,
-    color: AppColors.primaryText,
-    fontWeight: '800',
-    letterSpacing: 1,
-    fontSize: 7,
-  },
-  standardTitle: {
-    ...AppTextStyles.articleTitleMedium,
-    color: AppColors.primaryText,
-    fontWeight: '700',
-    lineHeight: 18,
-    letterSpacing: -0.3,
-    marginBottom: AppSpacing.sm,
-    fontSize: 13,
-  },
-  standardMeta: {
+  briefSource: {
     ...AppTextStyles.captionSmall,
     color: AppColors.gray600,
-    fontSize: 9,
-  },
-  standardImageBox: {
-    borderWidth: 1,
-    borderColor: AppColors.primaryText,
-  },
-  standardImage: {
-    width: 75,
-    height: 75,
-    backgroundColor: AppColors.gray200,
+    fontWeight: '700',
+    fontSize: 10,
+    letterSpacing: 0.5,
   },
 
   // ========== COLUMN ==========

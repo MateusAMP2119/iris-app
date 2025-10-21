@@ -65,11 +65,12 @@ function HomeScreen() {
 
     if (isMobile) {
       // Mobile: Single column with compact layout
-      return remainingArticles.map((article) => (
+      return remainingArticles.map((article, index) => (
         <NewspaperCompactCard
           key={article.id}
           article={article}
           onTap={() => navigateToArticle(article)}
+          index={index}
         />
       ));
     } else {
@@ -314,10 +315,10 @@ const styles = StyleSheet.create({
   // ========== ARTICLES SECTION ==========
   articlesSection: {
     paddingTop: AppSpacing.xl,
+    paddingHorizontal: isMobile ? pageMargin : 0,
   },
   columnsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: isMobile ? pageMargin : 0,
   },
 
   // ========== FAB ==========
