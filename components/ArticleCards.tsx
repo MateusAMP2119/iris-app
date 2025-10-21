@@ -1,6 +1,7 @@
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
+import React from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Article, getTimeAgo } from '../models';
-import { AppColors, AppTextStyles, AppSpacing } from '../theme';
+import { AppColors, AppSpacing, AppTextStyles } from '../theme';
 
 interface HeroArticleCardProps {
   article: Article;
@@ -9,44 +10,45 @@ interface HeroArticleCardProps {
 
 export function HeroArticleCard({ article, onTap }: HeroArticleCardProps) {
   return (
-    <Pressable onPress={onTap} style={styles.heroCard}>
-      {/* Title - Classic newspaper headline */}
-      <Text style={styles.heroTitle} numberOfLines={4}>
-        {article.title}
-      </Text>
-
-      {/* Categories */}
+    <Pressable onPress={onTap} style={styles.hero}>
+      {/* Category Divider Line */}
       {article.categories && article.categories.length > 0 && (
-        <View style={styles.categoriesRow}>
-          {article.categories.map((cat) => (
-            <View key={cat.id} style={styles.categoryBadge}>
-              <Text style={styles.categoryText}>{cat.name.toUpperCase()}</Text>
-            </View>
-          ))}
+        <View style={styles.heroCategoryRow}>
+          <View style={styles.heroLine} />
+          <Text style={styles.heroCategory}>
+            {article.categories[0].name.toUpperCase()}
+          </Text>
+          <View style={styles.heroLine} />
         </View>
       )}
 
-      {/* Image */}
+      {/* Headline */}
+      <Text style={styles.heroTitle}>{article.title}</Text>
+
+      {/* Featured Image */}
       {article.imageUrl && (
-        <Image source={{ uri: article.imageUrl }} style={styles.heroImage} />
+        <View style={styles.heroImageBox}>
+          <Image source={{ uri: article.imageUrl }} style={styles.heroImage} />
+        </View>
       )}
 
-      {/* Excerpt */}
+      {/* Lead */}
       {article.excerpt && (
-        <Text style={styles.heroExcerpt} numberOfLines={3}>
-          {article.excerpt}
-        </Text>
+        <Text style={styles.heroExcerpt}>{article.excerpt}</Text>
       )}
 
-      {/* Metadata */}
-      <View style={styles.heroMeta}>
-        {article.source && (
-          <>
-            <Text style={styles.heroMetaText}>{article.source.name}</Text>
-            <View style={styles.dot} />
-          </>
-        )}
-        <Text style={styles.heroMetaText}>{getTimeAgo(article.publishedAt)}</Text>
+      {/* Byline */}
+      <View style={styles.heroByline}>
+        <View style={styles.heroBylineLine} />
+        <View style={styles.heroBylineRow}>
+          {article.source && (
+            <Text style={styles.heroSource}>
+              BY {article.source.name.toUpperCase()}
+            </Text>
+          )}
+          <Text style={styles.heroDot}> · </Text>
+          <Text style={styles.heroTime}>{getTimeAgo(article.publishedAt)}</Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -55,45 +57,81 @@ export function HeroArticleCard({ article, onTap }: HeroArticleCardProps) {
 interface NewspaperCompactCardProps {
   article: Article;
   onTap: () => void;
+  index?: number;
 }
 
-export function NewspaperCompactCard({ article, onTap }: NewspaperCompactCardProps) {
+export function NewspaperCompactCard({
+  article,
+  onTap,
+  index = 0,
+}: NewspaperCompactCardProps) {
+  const variant = index % 5;
+
+  // Brief (Text-only) - every 5th
+  if (variant === 0) {
+    return (
+      <Pressable onPress={onTap} style={styles.brief}>
+        <View style={styles.briefBar} />
+        <View style={styles.briefBody}>
+          <Text style={styles.briefTitle} numberOfLines={2}>
+            {article.title}
+          </Text>
+          <Text style={styles.briefMeta}>
+            {article.source?.name.toUpperCase() || 'STAFF'}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  }
+
+  // Feature (Big image) - every 4th (not 5th)
+  if (variant === 3) {
+    return (
+      <Pressable onPress={onTap} style={styles.feature}>
+        {article.imageUrl && (
+          <View style={styles.featureImageBox}>
+            <Image source={{ uri: article.imageUrl }} style={styles.featureImage} />
+          </View>
+        )}
+        {article.categories && article.categories.length > 0 && (
+          <Text style={styles.featureLabel}>
+            {article.categories[0].name.toUpperCase()}
+          </Text>
+        )}
+        <Text style={styles.featureTitle} numberOfLines={3}>
+          {article.title}
+        </Text>
+        <View style={styles.featureFooter}>
+          <Text style={styles.featureMeta}>
+            {article.source?.name || 'Staff'} · {getTimeAgo(article.publishedAt)}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  }
+
+  // Standard (Side image)
   return (
-    <Pressable onPress={onTap} style={styles.compactCard}>
-      <View style={styles.compactContent}>
-        {/* Text Content */}
-        <View style={styles.compactText}>
-          {/* Categories - small bordered badge */}
+    <Pressable onPress={onTap} style={styles.standard}>
+      <View style={styles.standardBody}>
+        <View style={styles.standardText}>
           {article.categories && article.categories.length > 0 && (
-            <View style={styles.compactCategoryBadge}>
-              <Text style={styles.compactCategoryText}>
+            <View style={styles.standardLabel}>
+              <Text style={styles.standardLabelText}>
                 {article.categories[0].name.toUpperCase()}
               </Text>
             </View>
           )}
-
-          {/* Title */}
-          <Text style={styles.compactTitle} numberOfLines={3}>
+          <Text style={styles.standardTitle} numberOfLines={4}>
             {article.title}
           </Text>
-
-          {/* Metadata with decorative line */}
-          <View style={styles.compactMeta}>
-            <View style={styles.compactMetaLine} />
-            {article.source && (
-              <>
-                <Text style={styles.compactMetaTextBold}>{article.source.name}</Text>
-                <Text style={styles.compactMetaDot}> • </Text>
-              </>
-            )}
-            <Text style={styles.compactMetaTextItalic}>{getTimeAgo(article.publishedAt)}</Text>
-          </View>
+          <Text style={styles.standardMeta} numberOfLines={1}>
+            {article.source?.name || 'Staff'} · {getTimeAgo(article.publishedAt)}
+          </Text>
         </View>
-
-        {/* Image with border */}
         {article.imageUrl && (
-          <View style={styles.compactImageContainer}>
-            <Image source={{ uri: article.imageUrl }} style={styles.compactImage} />
+          <View style={styles.standardImageBox}>
+            <Image source={{ uri: article.imageUrl }} style={styles.standardImage} />
           </View>
         )}
       </View>
@@ -107,180 +145,268 @@ interface NewspaperColumnProps {
   title?: string;
 }
 
-export function NewspaperColumn({ articles, onArticleTap, title }: NewspaperColumnProps) {
+export function NewspaperColumn({
+  articles,
+  onArticleTap,
+  title,
+}: NewspaperColumnProps) {
   return (
     <View style={styles.column}>
       {title && (
-        <View style={styles.columnHeader}>
-          <View style={styles.columnBar} />
+        <View style={styles.columnHead}>
           <Text style={styles.columnTitle}>{title}</Text>
+          <View style={styles.columnLine} />
         </View>
       )}
-      {articles.map((article) => (
+      {articles.map((article, index) => (
         <NewspaperCompactCard
           key={article.id}
           article={article}
           onTap={() => onArticleTap(article)}
+          index={index}
         />
       ))}
     </View>
   );
 }
 
+
 const styles = StyleSheet.create({
-  // Hero Card Styles
-  heroCard: {
+  // ========== HERO ==========
+  hero: {
     width: '100%',
-    borderBottomWidth: 3,
-    borderBottomColor: AppColors.divider,
-    paddingBottom: AppSpacing.lg,
+  },
+  heroCategoryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: AppSpacing.md,
+  },
+  heroLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: AppColors.primaryText,
+  },
+  heroCategory: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    letterSpacing: 2,
+    fontSize: 10,
+    paddingHorizontal: AppSpacing.md,
   },
   heroTitle: {
     ...AppTextStyles.articleTitleHero,
     color: AppColors.primaryText,
-    lineHeight: AppTextStyles.articleTitleHero.fontSize * 1.1,
-    letterSpacing: -0.5,
-    fontWeight: '800',
-    marginBottom: AppSpacing.sm,
+    fontWeight: '900',
+    lineHeight: 42,
+    letterSpacing: -1.5,
+    marginBottom: AppSpacing.lg,
   },
-  categoriesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: AppSpacing.md,
-    gap: AppSpacing.xs,
-  },
-  categoryBadge: {
-    paddingHorizontal: AppSpacing.sm,
-    paddingVertical: 2,
-    borderWidth: 1,
+  heroImageBox: {
+    borderWidth: 3,
     borderColor: AppColors.primaryText,
-  },
-  categoryText: {
-    ...AppTextStyles.labelSmall,
-    fontSize: 9,
-    color: AppColors.primaryText,
-    letterSpacing: 1.2,
-    fontWeight: '700',
+    marginBottom: AppSpacing.lg,
   },
   heroImage: {
     width: '100%',
-    aspectRatio: 16 / 9,
+    aspectRatio: 16 / 10,
     backgroundColor: AppColors.gray200,
-    marginBottom: AppSpacing.md,
   },
   heroExcerpt: {
     ...AppTextStyles.bodyMedium,
-    color: AppColors.gray700,
-    marginBottom: AppSpacing.sm,
+    color: AppColors.primaryText,
+    lineHeight: 24,
+    textAlign: 'justify',
+    marginBottom: AppSpacing.lg,
+    fontSize: 16,
   },
-  heroMeta: {
+  heroByline: {
+    marginTop: AppSpacing.sm,
+  },
+  heroBylineLine: {
+    width: 60,
+    height: 2,
+    backgroundColor: AppColors.primaryText,
+    marginBottom: AppSpacing.xs,
+  },
+  heroBylineRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  heroMetaText: {
+  heroSource: {
+    ...AppTextStyles.caption,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontSize: 10,
+  },
+  heroDot: {
+    ...AppTextStyles.caption,
+    color: AppColors.gray400,
+    fontSize: 10,
+  },
+  heroTime: {
     ...AppTextStyles.caption,
     color: AppColors.gray600,
-    fontWeight: '600',
-    fontSize: 11,
-  },
-  dot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: AppColors.gray400,
-    marginHorizontal: AppSpacing.xs,
+    fontStyle: 'italic',
+    fontSize: 10,
   },
 
-  // Compact Card Styles
-  compactCard: {
+  // ========== BRIEF (Text-only) ==========
+  brief: {
+    flexDirection: 'row',
     paddingVertical: AppSpacing.md,
     borderBottomWidth: 1,
     borderBottomColor: AppColors.dividerLight,
   },
-  compactContent: {
-    flexDirection: 'row',
-  },
-  compactText: {
-    flex: 1,
-    paddingRight: AppSpacing.md,
-  },
-  compactCategoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: AppSpacing.xs,
-    paddingVertical: 2,
-    borderWidth: 1,
-    borderColor: AppColors.primaryText,
-    marginBottom: AppSpacing.xs,
-  },
-  compactCategoryText: {
-    ...AppTextStyles.labelSmall,
-    fontSize: 8,
-    color: AppColors.primaryText,
-    letterSpacing: 1,
-    fontWeight: '700',
-  },
-  compactTitle: {
-    ...AppTextStyles.articleTitleMedium,
-    color: AppColors.primaryText,
-    fontWeight: '700',
-    letterSpacing: -0.3,
-    lineHeight: AppTextStyles.articleTitleMedium.fontSize * 1.3,
-    marginBottom: AppSpacing.sm,
-  },
-  compactMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  compactMetaLine: {
-    width: 12,
-    height: 1,
-    backgroundColor: AppColors.primaryText,
-    marginRight: AppSpacing.xs,
-  },
-  compactMetaTextBold: {
-    ...AppTextStyles.captionSmall,
-    color: AppColors.primaryText,
-    fontWeight: '700',
-  },
-  compactMetaDot: {
-    ...AppTextStyles.captionSmall,
-    color: AppColors.gray400,
-  },
-  compactMetaTextItalic: {
-    ...AppTextStyles.captionSmall,
-    color: AppColors.gray600,
-    fontStyle: 'italic',
-  },
-  compactImageContainer: {
-    borderWidth: 1,
-    borderColor: AppColors.gray300,
-  },
-  compactImage: {
-    width: 100,
-    height: 100,
-    backgroundColor: AppColors.gray200,
-  },
-
-  // Column Styles
-  column: {
-    flex: 1,
-    paddingHorizontal: AppSpacing.md,
-  },
-  columnHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: AppSpacing.lg,
-  },
-  columnBar: {
-    width: 3,
-    height: 24,
+  briefBar: {
+    width: 4,
     backgroundColor: AppColors.primaryText,
     marginRight: AppSpacing.sm,
   },
-  columnTitle: {
-    ...AppTextStyles.headlineSecondary,
+  briefBody: {
+    flex: 1,
+  },
+  briefTitle: {
+    ...AppTextStyles.articleTitleMedium,
     color: AppColors.primaryText,
+    fontWeight: '700',
+    lineHeight: 20,
+    letterSpacing: -0.3,
+    marginBottom: AppSpacing.xs,
+    fontSize: 14,
+  },
+  briefMeta: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontWeight: '700',
+    letterSpacing: 1,
+    fontSize: 8,
+  },
+
+  // ========== FEATURE ==========
+  feature: {
+    paddingVertical: AppSpacing.lg,
+    borderBottomWidth: 2,
+    borderBottomColor: AppColors.primaryText,
+  },
+  featureImageBox: {
+    borderWidth: 2,
+    borderColor: AppColors.primaryText,
+    marginBottom: AppSpacing.md,
+  },
+  featureImage: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    backgroundColor: AppColors.gray200,
+  },
+  featureLabel: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.surface,
+    backgroundColor: AppColors.primaryText,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    fontSize: 9,
+    paddingHorizontal: AppSpacing.xs,
+    paddingVertical: 2,
+    alignSelf: 'flex-start',
+    marginBottom: AppSpacing.xs,
+  },
+  featureTitle: {
+    ...AppTextStyles.articleTitleLarge,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    lineHeight: 24,
+    letterSpacing: -0.5,
+    marginBottom: AppSpacing.sm,
+    fontSize: 18,
+  },
+  featureFooter: {
+    borderTopWidth: 1,
+    borderTopColor: AppColors.divider,
+    paddingTop: AppSpacing.xs,
+  },
+  featureMeta: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontSize: 9,
+  },
+
+  // ========== STANDARD ==========
+  standard: {
+    paddingVertical: AppSpacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: AppColors.divider,
+  },
+  standardBody: {
+    flexDirection: 'row',
+  },
+  standardText: {
+    flex: 1,
+    paddingRight: AppSpacing.md,
+  },
+  standardLabel: {
+    borderWidth: 1,
+    borderColor: AppColors.primaryText,
+    paddingHorizontal: AppSpacing.xs,
+    paddingVertical: 1,
+    alignSelf: 'flex-start',
+    marginBottom: AppSpacing.xs,
+  },
+  standardLabelText: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    letterSpacing: 1,
+    fontSize: 7,
+  },
+  standardTitle: {
+    ...AppTextStyles.articleTitleMedium,
+    color: AppColors.primaryText,
+    fontWeight: '700',
+    lineHeight: 18,
+    letterSpacing: -0.3,
+    marginBottom: AppSpacing.sm,
+    fontSize: 13,
+  },
+  standardMeta: {
+    ...AppTextStyles.captionSmall,
+    color: AppColors.gray600,
+    fontSize: 9,
+  },
+  standardImageBox: {
+    borderWidth: 1,
+    borderColor: AppColors.primaryText,
+  },
+  standardImage: {
+    width: 75,
+    height: 75,
+    backgroundColor: AppColors.gray200,
+  },
+
+  // ========== COLUMN ==========
+  column: {
+    flex: 1,
+    paddingHorizontal: AppSpacing.lg,
+    borderRightWidth: 1,
+    borderRightColor: AppColors.divider,
+  },
+  columnHead: {
+    marginBottom: AppSpacing.lg,
+  },
+  columnTitle: {
+    ...AppTextStyles.labelLarge,
+    color: AppColors.surface,
+    backgroundColor: AppColors.primaryText,
     fontWeight: '900',
     letterSpacing: 2,
+    fontSize: 13,
+    paddingHorizontal: AppSpacing.sm,
+    paddingVertical: 4,
+  },
+  columnLine: {
+    height: 3,
+    backgroundColor: AppColors.primaryText,
   },
 });
+

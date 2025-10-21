@@ -1,0 +1,352 @@
+{
+  "designSystem": {
+    "metadata": {
+      "purpose": "Extract visual design patterns and systems from editorial and web layouts",
+      "usage": "Provide AI context for replicating consistent design systems",
+      "version": "1.0"
+    },
+    "layouts": [
+      {
+        "id": "editorial_newspaper",
+        "type": "Print Editorial",
+        "description": "Traditional newspaper/magazine layout with hierarchical content structure",
+        "gridSystem": {
+          "type": "Multi-column grid",
+          "columns": "3-5 flexible columns",
+          "gutters": "Medium spacing (15-20px equivalent)",
+          "alignment": "Justified and left-aligned text blocks"
+        },
+        "hierarchy": {
+          "primary": "Large hero image with prominent headline",
+          "secondary": "Multiple story blocks with supporting images",
+          "tertiary": "Sidebar content, weather, date information"
+        },
+        "typography": {
+          "masthead": {
+            "style": "Bold, high-contrast, serif or heavy sans-serif",
+            "weight": "Black or Extra Bold",
+            "size": "Very large (72-120pt equivalent)"
+          },
+          "headlines": {
+            "primary": "Bold serif, 36-48pt equivalent",
+            "secondary": "Medium weight serif, 24-30pt equivalent",
+            "tertiary": "Regular weight, 14-18pt equivalent"
+          },
+          "body": {
+            "font": "Serif for readability",
+            "size": "9-11pt equivalent",
+            "lineHeight": "1.4-1.6",
+            "columns": "Narrow columns for easy scanning"
+          },
+          "captions": {
+            "style": "Small sans-serif or light serif",
+            "size": "8-9pt equivalent"
+          }
+        },
+        "colorPalette": {
+          "primary": "Black text on white/cream background",
+          "accent": "Minimal use of color (red, blue for highlights)",
+          "contrast": "High contrast for readability"
+        },
+        "spacing": {
+          "articleGaps": "Thick black or colored divider lines",
+          "sectionBreaks": "Clear visual separation with rules",
+          "margins": "Moderate to tight margins"
+        },
+        "imageUsage": {
+          "style": "Photojournalistic, documentary",
+          "treatment": "Black and white or muted color",
+          "proportion": "Various sizes, often rectangular",
+          "placement": "Integrated with text, breaking columns"
+        }
+      },
+      {
+        "id": "vintage_newspaper_feature",
+        "type": "Feature Article Layout",
+        "description": "Long-form editorial with vintage aesthetic",
+        "gridSystem": {
+          "type": "Asymmetric column layout",
+          "columns": "2-3 main columns with sidebar",
+          "emphasis": "Vertical flow with clear reading path"
+        },
+        "hierarchy": {
+          "title": "Centered or left-aligned large headline",
+          "subtitle": "Supporting deck or subheadline",
+          "sections": "Boxed sections for supplementary content"
+        },
+        "typography": {
+          "display": {
+            "style": "Serif, elegant, traditional",
+            "characteristics": "High x-height, classic proportions"
+          },
+          "emphasis": {
+            "method": "Bold weight, italic, or all-caps for section headers",
+            "quotes": "Larger pull quotes in serif"
+          }
+        },
+        "colorPalette": {
+          "base": "Black on aged white/cream/beige",
+          "texture": "Paper texture, aged appearance",
+          "accents": "Minimal, possibly single accent color"
+        },
+        "decorativeElements": {
+          "borders": "Thin rule lines",
+          "boxes": "Outlined content boxes",
+          "ornamentation": "Minimal decorative flourishes"
+        },
+        "imageUsage": {
+          "style": "Black and white photography",
+          "treatment": "High contrast, grainy texture",
+          "framing": "Clean edges, no effects"
+        }
+      },
+      {
+        "id": "modern_ecommerce_landing",
+        "type": "E-commerce Landing Page",
+        "description": "Modern, clean e-commerce design with card-based layout",
+        "gridSystem": {
+          "type": "Card grid system",
+          "responsive": "Flexible grid adapting to viewport",
+          "columns": "2-4 columns depending on screen size",
+          "cardSpacing": "Consistent gaps between cards"
+        },
+        "hierarchy": {
+          "hero": "Large hero section with headline and CTA",
+          "features": "Icon-based feature highlights",
+          "content": "Card-based content modules",
+          "social": "Testimonial/review cards"
+        },
+        "typography": {
+          "headlines": {
+            "style": "Bold sans-serif, high impact",
+            "weight": "Heavy to Black weight",
+            "size": "Large scale (48-72px)",
+            "casing": "Often uppercase for emphasis"
+          },
+          "body": {
+            "style": "Clean sans-serif",
+            "weight": "Regular to Medium",
+            "size": "16-18px",
+            "lineHeight": "1.5-1.7"
+          },
+          "cta": {
+            "style": "Bold, uppercase or sentence case",
+            "prominence": "High contrast, clear action words"
+          }
+        },
+        "colorPalette": {
+          "scheme": "Limited palette (2-3 main colors)",
+          "primary": "Bold, vibrant accent color",
+          "neutral": "White, light grays, dark grays/black",
+          "contrast": "High contrast for CTAs"
+        },
+        "spacing": {
+          "sections": "Large whitespace between sections",
+          "padding": "Generous padding in cards and containers",
+          "rhythm": "Consistent vertical rhythm"
+        },
+        "components": {
+          "cards": {
+            "style": "Clean rectangles with subtle shadows or borders",
+            "imageRatio": "Consistent aspect ratios (16:9, 4:3, 1:1)",
+            "content": "Image + headline + brief text + CTA"
+          },
+          "buttons": {
+            "style": "Solid fills or outlined",
+            "shape": "Rounded corners (4-8px radius)",
+            "size": "Large, finger-friendly"
+          },
+          "icons": {
+            "style": "Line icons or simple filled shapes",
+            "usage": "Feature highlights, navigation, CTAs"
+          }
+        },
+        "imageUsage": {
+          "style": "Lifestyle photography, product shots",
+          "treatment": "Bright, colorful, high quality",
+          "consistency": "Uniform styling across images"
+        }
+      },
+      {
+        "id": "editorial_tablet_magazine",
+        "type": "Digital Magazine Layout",
+        "description": "Modern editorial design with strong grid and typography",
+        "gridSystem": {
+          "type": "Modular grid system",
+          "structure": "Strict grid with modules of varying sizes",
+          "columns": "Multi-column (4-6 columns)",
+          "flexibility": "Content spans multiple modules"
+        },
+        "hierarchy": {
+          "organization": "Clear section headers",
+          "visual": "Size and position indicate importance",
+          "navigation": "Sidebar or top navigation elements"
+        },
+        "typography": {
+          "headlines": {
+            "style": "Mix of serif and sans-serif",
+            "weight": "Bold to Black",
+            "size": "Very large display type",
+            "spacing": "Tight letter-spacing"
+          },
+          "body": {
+            "style": "Serif for long-form reading",
+            "columns": "Multi-column text blocks",
+            "size": "10-12pt",
+            "lineHeight": "1.5-1.8"
+          },
+          "labels": {
+            "style": "Small caps or uppercase sans-serif",
+            "color": "Often in accent color",
+            "weight": "Medium to Bold"
+          }
+        },
+        "colorPalette": {
+          "base": "Black text on cream/off-white",
+          "accent": "1-2 accent colors (often warm tones)",
+          "distribution": "Accent colors in headers, boxes, highlights"
+        },
+        "spacing": {
+          "precision": "Mathematically consistent spacing",
+          "whitespace": "Generous margins and gutters",
+          "density": "Balanced density across layout"
+        },
+        "decorativeElements": {
+          "rules": "Thin or thick rule lines for separation",
+          "boxes": "Colored or outlined content containers",
+          "numbers": "Large decorative numbers for lists/dates"
+        },
+        "imageUsage": {
+          "style": "Mixed - photography and illustrations",
+          "treatment": "Black and white or limited color",
+          "integration": "Images break grid or align precisely"
+        }
+      },
+      {
+        "id": "modern_content_portal",
+        "type": "Content-Heavy Web Portal",
+        "description": "Modern web design with bold typography and card-based modules",
+        "gridSystem": {
+          "type": "Flexible modular grid",
+          "responsive": "Fully responsive with breakpoints",
+          "cards": "Variable-sized card modules",
+          "flow": "Vertical stacking on mobile, multi-column on desktop"
+        },
+        "hierarchy": {
+          "hero": "Full-width hero with large headline",
+          "quotes": "Large typographic quotes as section breaks",
+          "content": "Mixed module sizes for visual interest",
+          "cta": "Prominent call-to-action sections"
+        },
+        "typography": {
+          "display": {
+            "style": "Bold sans-serif, modern grotesque",
+            "weight": "Black or Extra Bold",
+            "size": "Very large (56-96px)",
+            "color": "Often white on images or dark backgrounds"
+          },
+          "body": {
+            "style": "Sans-serif, clean and legible",
+            "weight": "Regular to Medium",
+            "size": "16-20px"
+          },
+          "labels": {
+            "style": "Uppercase sans-serif",
+            "weight": "Medium to Bold",
+            "size": "12-14px",
+            "letterSpacing": "Wide tracking"
+          }
+        },
+        "colorPalette": {
+          "scheme": "Bold, vibrant color scheme",
+          "primary": "1-2 strong brand colors",
+          "backgrounds": "White, dark gray/black, colored sections",
+          "contrast": "Strong contrast for readability"
+        },
+        "spacing": {
+          "sections": "Large vertical spacing between sections",
+          "cards": "Medium gaps between cards (20-30px)",
+          "padding": "Generous internal padding (40-60px)"
+        },
+        "components": {
+          "imageCards": {
+            "style": "Image with text overlay or below",
+            "overlay": "Gradient or solid color overlay on images",
+            "corners": "Rounded corners (8-16px)",
+            "hover": "Subtle hover effects (scale, opacity)"
+          },
+          "buttons": {
+            "style": "Circular icon buttons or rounded rectangles",
+            "treatment": "Solid or outlined with icons",
+            "size": "Large, accessible sizing"
+          },
+          "sections": {
+            "alternating": "Alternating colored backgrounds",
+            "fullWidth": "Full-width sections with contained content"
+          }
+        },
+        "imageUsage": {
+          "style": "Lifestyle and fashion photography",
+          "treatment": "Color with overlays or filters",
+          "aspectRatios": "Various ratios for visual rhythm",
+          "quality": "High-resolution, professional"
+        }
+      }
+    ],
+    "commonPatterns": {
+      "containerWidth": {
+        "fullWidth": "100% viewport width",
+        "contained": "1200-1400px max-width with auto margins",
+        "narrow": "600-800px for reading content"
+      },
+      "responsiveBreakpoints": {
+        "mobile": "320-767px",
+        "tablet": "768-1023px",
+        "desktop": "1024px+"
+      },
+      "cardDesign": {
+        "shadow": "Subtle box-shadow (0 2px 8px rgba(0,0,0,0.1))",
+        "border": "1px solid light gray or no border",
+        "radius": "4-16px rounded corners",
+        "padding": "20-40px internal padding"
+      },
+      "buttons": {
+        "primary": "Solid background, white text, brand color",
+        "secondary": "Outlined, transparent background, brand color border",
+        "sizes": "Small (32-36px), Medium (40-48px), Large (52-60px height)",
+        "radius": "4-8px rounded corners"
+      },
+      "navigationPatterns": {
+        "horizontal": "Top navigation bar with logo left, menu right",
+        "sidebar": "Vertical sidebar navigation",
+        "hamburger": "Mobile hamburger menu icon"
+      }
+    },
+    "designPrinciples": {
+      "clarity": "Clear visual hierarchy guides user attention",
+      "consistency": "Consistent spacing, typography, and components",
+      "contrast": "Strong contrast for readability and emphasis",
+      "whitespace": "Generous whitespace prevents visual clutter",
+      "alignment": "Precise grid alignment creates order",
+      "typography": "Typography as primary design element",
+      "imagery": "High-quality images that support content",
+      "color": "Limited, purposeful color palette",
+      "responsiveness": "Fluid layouts that adapt to screen size",
+      "accessibility": "Readable fonts, sufficient contrast, clear hierarchy"
+    },
+    "implementationGuidelines": {
+      "forAI": [
+        "Identify layout type first (editorial, e-commerce, content portal)",
+        "Apply appropriate grid system and column structure",
+        "Establish clear typographic hierarchy with specified weights and sizes",
+        "Use color palette sparingly and purposefully",
+        "Implement consistent spacing using multipliers of base unit (8px)",
+        "Create modular, reusable components",
+        "Ensure responsive behavior at standard breakpoints",
+        "Maintain high contrast for readability",
+        "Use whitespace generously for breathing room",
+        "Balance visual weight across the layout"
+      ]
+    }
+  }
+}

@@ -1,26 +1,24 @@
+import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
+  Dimensions,
+  Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
-  Platform,
-  Dimensions,
-  Pressable,
+  Text,
+  View,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { router } from 'expo-router';
-import { Article, Category } from '../models';
-import MockDataService from '../services/MockDataService';
 import {
   HeroArticleCard,
-  NewspaperCompactCard,
-  NewspaperColumn,
-  CategoryChip,
-  SectionHeader,
   LiquidGlassFAB,
+  NewspaperColumn,
+  NewspaperCompactCard,
 } from '../components';
-import { AppColors, AppTextStyles, AppSpacing } from '../theme';
+import { Article, Category } from '../models';
+import MockDataService from '../services/MockDataService';
+import { AppColors, AppSpacing, AppTextStyles } from '../theme';
 
 const { width } = Dimensions.get('window');
 const isMobile = width < 768;
@@ -129,64 +127,62 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView style={styles.scrollView}>
-        {/* Masthead */}
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Masthead - Compact Newspaper Header */}
         <View style={styles.masthead}>
-          <View style={styles.dateRow}>
-            <View style={styles.dateLine} />
+          <View style={styles.mastheadRow}>
+            <Text style={styles.mastheadTitle}>IRIS</Text>
+            <View style={styles.mastheadDivider} />
             <Text style={styles.dateText}>{dateString.toUpperCase()}</Text>
           </View>
-          <Text style={[styles.mastheadTitle, !isMobile && styles.mastheadTitleDesktop]}>
-            IRIS NEWS
-          </Text>
-          <View style={styles.mastheadUnderline} />
         </View>
 
-        {/* Category Filter */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoryScroll}
-          contentContainerStyle={styles.categoryContent}
-        >
-          <Pressable
-            onPress={() => handleCategorySelect(null)}
-            style={[
-              styles.allCategoryChip,
-              {
-                backgroundColor:
-                  selectedCategory === null
-                    ? AppColors.primaryText
-                    : 'transparent',
-                borderColor: AppColors.primaryText,
-              },
-            ]}
+        {/* Category Navigation Bar */}
+        <View style={styles.navBar}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.navContent}
           >
-            <Text
+            <Pressable
+              onPress={() => handleCategorySelect(null)}
               style={[
-                styles.allCategoryText,
-                {
-                  color:
-                    selectedCategory === null
-                      ? AppColors.surface
-                      : AppColors.primaryText,
-                },
+                styles.navItem,
+                selectedCategory === null && styles.navItemActive,
               ]}
             >
-              ALL
-            </Text>
-          </Pressable>
-          {categories.map((category) => (
-            <CategoryChip
-              key={category.id}
-              category={category}
-              isSelected={selectedCategory?.id === category.id}
-              onTap={() => handleCategorySelect(category)}
-            />
-          ))}
-        </ScrollView>
+              <Text
+                style={[
+                  styles.navText,
+                  selectedCategory === null && styles.navTextActive,
+                ]}
+              >
+                ALL NEWS
+              </Text>
+            </Pressable>
+            {categories.map((category) => (
+              <Pressable
+                key={category.id}
+                onPress={() => handleCategorySelect(category)}
+                style={[
+                  styles.navItem,
+                  selectedCategory?.id === category.id && styles.navItemActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.navText,
+                    selectedCategory?.id === category.id && styles.navTextActive,
+                  ]}
+                >
+                  {category.name.toUpperCase()}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
 
-        {/* Hero Article */}
+        {/* Hero Article - Above the Fold */}
         {articles.length > 0 && (
           <View style={styles.heroSection}>
             <HeroArticleCard
@@ -196,21 +192,22 @@ function HomeScreen() {
           </View>
         )}
 
-        {/* Section Header */}
-        <View style={styles.sectionHeader}>
-          <SectionHeader
-            title={selectedCategory ? selectedCategory.name : 'Latest News'}
-            subtitle={selectedCategory?.description}
-          />
-        </View>
+        {/* Section Divider */}
+        {articles.length > 1 && (
+          <View style={styles.sectionDivider}>
+            <View style={styles.dividerLine} />
+          </View>
+        )}
 
-        {/* Newspaper Layout */}
-        <View style={styles.articlesSection}>{renderNewspaperLayout()}</View>
+        {/* Articles Grid - Newspaper Columns */}
+        {articles.length > 1 && (
+          <View style={styles.articlesSection}>{renderNewspaperLayout()}</View>
+        )}
 
-        <View style={{ height: AppSpacing.xxxl }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Floating Action Button */}
+      {/* Liquid Glass FAB */}
       <View style={styles.fabContainer}>
         <LiquidGlassFAB
           isExpanded={isFabMenuExpanded}
@@ -231,84 +228,103 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  
+  // ========== MASTHEAD ==========
   masthead: {
     paddingHorizontal: pageMargin,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: AppSpacing.md,
+    paddingBottom: AppSpacing.sm,
+    borderBottomWidth: 3,
+    borderBottomColor: AppColors.primaryText,
   },
-  dateRow: {
+  mastheadRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: AppSpacing.sm,
-  },
-  dateLine: {
-    width: 30,
-    height: 1,
-    backgroundColor: AppColors.primaryText,
-    marginRight: AppSpacing.xs,
-  },
-  dateText: {
-    ...AppTextStyles.caption,
-    color: AppColors.primaryText,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    justifyContent: 'space-between',
   },
   mastheadTitle: {
     ...AppTextStyles.headlinePrimary,
     color: AppColors.primaryText,
     fontWeight: '900',
-    letterSpacing: 2,
+    letterSpacing: 8,
+    fontSize: isMobile ? 28 : 36,
   },
-  mastheadTitleDesktop: {
-    ...AppTextStyles.masthead,
-    letterSpacing: 4,
-  },
-  mastheadUnderline: {
-    width: isMobile ? 120 : 200,
+  mastheadDivider: {
+    flex: 1,
     height: 2,
     backgroundColor: AppColors.primaryText,
-    marginTop: AppSpacing.xs / 2,
+    marginHorizontal: AppSpacing.md,
   },
-  categoryScroll: {
-    height: 30,
-    marginLeft: pageMargin,
-    marginTop: AppSpacing.lg,
-  },
-  categoryContent: {
-    paddingRight: pageMargin,
-    gap: AppSpacing.sm,
-  },
-  allCategoryChip: {
-    paddingHorizontal: AppSpacing.md,
-    paddingVertical: 3,
-    borderWidth: 1.5,
-    height: 30,
-    justifyContent: 'center',
-  },
-  allCategoryText: {
-    ...AppTextStyles.labelSmall,
-    letterSpacing: 1.2,
+  dateText: {
+    ...AppTextStyles.caption,
+    color: AppColors.primaryText,
     fontWeight: '700',
+    letterSpacing: 1.5,
+    fontSize: 8,
   },
+
+  // ========== NAVIGATION BAR ==========
+  navBar: {
+    borderBottomWidth: 3,
+    borderBottomColor: AppColors.primaryText,
+    backgroundColor: AppColors.primaryText,
+  },
+  navContent: {
+    paddingHorizontal: pageMargin,
+    flexDirection: 'row',
+    gap: 0,
+  },
+  navItem: {
+    paddingHorizontal: AppSpacing.md,
+    paddingVertical: AppSpacing.sm,
+    borderRightWidth: 1,
+    borderRightColor: AppColors.surface,
+  },
+  navItemActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  navText: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.surface,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    fontSize: 11,
+  },
+  navTextActive: {
+    color: AppColors.surface,
+    textDecorationLine: 'underline',
+  },
+
+  // ========== HERO SECTION ==========
   heroSection: {
     paddingHorizontal: pageMargin,
-    marginTop: AppSpacing.lg,
+    paddingTop: AppSpacing.xl,
+    paddingBottom: AppSpacing.xl,
   },
-  sectionHeader: {
+
+  // ========== SECTION DIVIDER ==========
+  sectionDivider: {
     paddingHorizontal: pageMargin,
-    marginTop: AppSpacing.lg,
   },
+  dividerLine: {
+    height: 4,
+    backgroundColor: AppColors.primaryText,
+  },
+
+  // ========== ARTICLES SECTION ==========
   articlesSection: {
-    paddingHorizontal: pageMargin,
-    marginTop: AppSpacing.md,
+    paddingTop: AppSpacing.xl,
   },
   columnsContainer: {
     flexDirection: 'row',
+    paddingHorizontal: isMobile ? pageMargin : 0,
   },
+
+  // ========== FAB ==========
   fabContainer: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
+    bottom: 24,
+    right: 24,
   },
 });
 

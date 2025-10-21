@@ -1,6 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { AppColors, AppTextStyles, AppSpacing } from '../theme';
 import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppColors, AppSpacing, AppTextStyles } from '../theme';
 
 interface SectionHeaderProps {
   title: string;
@@ -35,30 +35,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: AppColors.primaryText,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: AppColors.primaryText,
     paddingVertical: AppSpacing.sm,
     paddingHorizontal: AppSpacing.md,
   },
   title: {
     ...AppTextStyles.labelLarge,
-    color: '#FFFFFF',
-    letterSpacing: 2,
-    fontWeight: '800',
+    color: AppColors.surface,
+    letterSpacing: 2.5,
+    fontWeight: '900',
     flex: 1,
   },
   seeAllButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: AppColors.surface,
     paddingHorizontal: AppSpacing.sm,
     paddingVertical: AppSpacing.xs / 2,
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: AppColors.surface,
   },
   seeAllText: {
     ...AppTextStyles.labelSmall,
     color: AppColors.primaryText,
-    letterSpacing: 1,
-    fontWeight: '700',
+    letterSpacing: 1.2,
+    fontWeight: '800',
   },
   subtitle: {
     ...AppTextStyles.caption,

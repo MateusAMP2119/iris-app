@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, Pressable, View, Animated } from 'react-native';
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { AppColors } from '../theme';
 
 interface LiquidGlassFABProps {

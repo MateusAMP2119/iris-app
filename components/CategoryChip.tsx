@@ -1,7 +1,7 @@
-import { Pressable, Text, StyleSheet } from 'react-native';
-import { Category } from '../models';
-import { AppColors, AppTextStyles, AppSpacing } from '../theme';
 import React from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { Category } from '../models';
+import { AppColors, AppSpacing, AppTextStyles } from '../theme';
 
 interface CategoryChipProps {
   category: Category;
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: AppSpacing.md,
     paddingVertical: 3,
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: AppColors.primaryText,
     backgroundColor: 'transparent',
     justifyContent: 'center',
@@ -35,10 +35,10 @@ const styles = StyleSheet.create({
   chipText: {
     ...AppTextStyles.labelSmall,
     color: AppColors.primaryText,
-    letterSpacing: 1.2,
-    fontWeight: '700',
+    letterSpacing: 1.5,
+    fontWeight: '800',
   },
   chipTextSelected: {
-    color: '#FFFFFF',
+    color: AppColors.surface,
   },
 });
