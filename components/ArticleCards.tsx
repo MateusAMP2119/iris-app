@@ -11,25 +11,32 @@ interface HeroArticleCardProps {
 export function HeroArticleCard({ article, onTap }: HeroArticleCardProps) {
   return (
     <Pressable onPress={onTap} style={styles.hero}>
-      {/* Category Divider Line */}
+      {/* Category Tag */}
       {article.categories && article.categories.length > 0 && (
-        <View style={styles.heroCategoryRow}>
-          <View style={styles.heroLine} />
-          <Text style={styles.heroCategory}>
+        <View style={styles.heroCategoryTag}>
+          <Text style={styles.heroCategoryText}>
             {article.categories[0].name.toUpperCase()}
           </Text>
-          <View style={styles.heroLine} />
         </View>
       )}
 
       {/* Headline */}
       <Text style={styles.heroTitle}>{article.title}</Text>
 
+      {/* Author & Time */}
+      <View style={styles.heroMeta}>
+        {article.author && (
+          <>
+            <Text style={styles.heroAuthor}>By {article.author}</Text>
+            <Text style={styles.heroDot}> · </Text>
+          </>
+        )}
+        <Text style={styles.heroTime}>{getTimeAgo(article.publishedAt)}</Text>
+      </View>
+
       {/* Featured Image */}
       {article.imageUrl && (
-        <View style={styles.heroImageBox}>
-          <Image source={{ uri: article.imageUrl }} style={styles.heroImage} />
-        </View>
+        <Image source={{ uri: article.imageUrl }} style={styles.heroImage} />
       )}
 
       {/* Lead */}
@@ -37,19 +44,15 @@ export function HeroArticleCard({ article, onTap }: HeroArticleCardProps) {
         <Text style={styles.heroExcerpt}>{article.excerpt}</Text>
       )}
 
-      {/* Byline */}
-      <View style={styles.heroByline}>
-        <View style={styles.heroBylineLine} />
-        <View style={styles.heroBylineRow}>
-          {article.source && (
-            <Text style={styles.heroSource}>
-              BY {article.source.name.toUpperCase()}
-            </Text>
-          )}
-          <Text style={styles.heroDot}> · </Text>
-          <Text style={styles.heroTime}>{getTimeAgo(article.publishedAt)}</Text>
+      {/* Source */}
+      {article.source && (
+        <View style={styles.heroSource}>
+          <View style={styles.heroSourceLine} />
+          <Text style={styles.heroSourceText}>
+            {article.source.name.toUpperCase()}
+          </Text>
         </View>
-      </View>
+      )}
     </Pressable>
   );
 }
@@ -176,23 +179,19 @@ const styles = StyleSheet.create({
   hero: {
     width: '100%',
   },
-  heroCategoryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  heroCategoryTag: {
+    alignSelf: 'flex-start',
+    backgroundColor: AppColors.primaryText,
+    paddingHorizontal: AppSpacing.sm,
+    paddingVertical: AppSpacing.xs / 2,
     marginBottom: AppSpacing.md,
   },
-  heroLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: AppColors.primaryText,
-  },
-  heroCategory: {
+  heroCategoryText: {
     ...AppTextStyles.labelSmall,
-    color: AppColors.primaryText,
+    color: AppColors.surface,
     fontWeight: '800',
     letterSpacing: 2,
-    fontSize: 10,
-    paddingHorizontal: AppSpacing.md,
+    fontSize: 9,
   },
   heroTitle: {
     ...AppTextStyles.articleTitleHero,
@@ -200,45 +199,18 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 42,
     letterSpacing: -1.5,
-    marginBottom: AppSpacing.lg,
+    marginBottom: AppSpacing.sm,
   },
-  heroImageBox: {
-    borderWidth: 3,
-    borderColor: AppColors.primaryText,
-    marginBottom: AppSpacing.lg,
-  },
-  heroImage: {
-    width: '100%',
-    aspectRatio: 16 / 10,
-    backgroundColor: AppColors.gray200,
-  },
-  heroExcerpt: {
-    ...AppTextStyles.bodyMedium,
-    color: AppColors.primaryText,
-    lineHeight: 24,
-    textAlign: 'justify',
-    marginBottom: AppSpacing.lg,
-    fontSize: 16,
-  },
-  heroByline: {
-    marginTop: AppSpacing.sm,
-  },
-  heroBylineLine: {
-    width: 60,
-    height: 2,
-    backgroundColor: AppColors.primaryText,
-    marginBottom: AppSpacing.xs,
-  },
-  heroBylineRow: {
+  heroMeta: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: AppSpacing.lg,
   },
-  heroSource: {
+  heroAuthor: {
     ...AppTextStyles.caption,
     color: AppColors.primaryText,
-    fontWeight: '800',
-    letterSpacing: 1,
-    fontSize: 10,
+    fontWeight: '700',
+    fontSize: 11,
   },
   heroDot: {
     ...AppTextStyles.caption,
@@ -249,6 +221,36 @@ const styles = StyleSheet.create({
     ...AppTextStyles.caption,
     color: AppColors.gray600,
     fontStyle: 'italic',
+    fontSize: 10,
+  },
+  heroImage: {
+    width: '100%',
+    aspectRatio: 16 / 10,
+    backgroundColor: AppColors.gray200,
+    marginBottom: AppSpacing.lg,
+  },
+  heroExcerpt: {
+    ...AppTextStyles.bodyMedium,
+    color: AppColors.primaryText,
+    lineHeight: 24,
+    textAlign: 'justify',
+    marginBottom: AppSpacing.md,
+    fontSize: 16,
+  },
+  heroSource: {
+    marginTop: AppSpacing.sm,
+  },
+  heroSourceLine: {
+    width: 60,
+    height: 2,
+    backgroundColor: AppColors.primaryText,
+    marginBottom: AppSpacing.xs,
+  },
+  heroSourceText: {
+    ...AppTextStyles.caption,
+    color: AppColors.primaryText,
+    fontWeight: '800',
+    letterSpacing: 1,
     fontSize: 10,
   },
 
