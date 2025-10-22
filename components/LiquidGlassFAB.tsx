@@ -52,7 +52,7 @@ export function LiquidGlassFAB({
         effect="clear"
         style={[
           styles.glassContainer,
-          !isLiquidGlassSupported && { backgroundColor: 'rgba(255, 255, 255, 0.8)' }
+          !isLiquidGlassSupported && { backgroundColor: 'rgba(0, 0, 0, 0.7)' }
         ]}
       >
         <View style={styles.content}>
@@ -65,8 +65,7 @@ export function LiquidGlassFAB({
               <Ionicons
                 name="search"
                 size={24}
-                color={AppColors.primaryText}
-                style={{ opacity: 0.85 }}
+                color={AppColors.surface}
               />
             </Pressable>
           )}
@@ -80,8 +79,7 @@ export function LiquidGlassFAB({
               <Ionicons
                 name="filter"
                 size={24}
-                color={AppColors.primaryText}
-                style={{ opacity: 0.85 }}
+                color={AppColors.surface}
               />
             </Pressable>
           )}
@@ -97,8 +95,7 @@ export function LiquidGlassFAB({
             <Ionicons
               name={isExpanded ? 'close' : 'ellipsis-horizontal'}
               size={24}
-              color={AppColors.primaryText}
-              style={{ opacity: 0.85 }}
+              color={AppColors.surface}
             />
           </Pressable>
         </View>
@@ -124,6 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 28,
     overflow: 'hidden',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   content: {
     flex: 1,
@@ -145,6 +143,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     marginHorizontal: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
 });

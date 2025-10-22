@@ -22,12 +22,17 @@ export default function CategoryChip({ category, isSelected, onTap }: CategoryCh
 const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: AppSpacing.md,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderWidth: 2,
     borderColor: AppColors.primaryText,
-    backgroundColor: 'transparent',
+    backgroundColor: AppColors.background,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   chipText: {
     ...AppTextStyles.labelSmall,

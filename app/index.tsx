@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import {
+  ArticleModal,
   HeroArticleCard,
   LiquidGlassFAB,
   NewspaperColumn,
@@ -33,6 +33,8 @@ function HomeScreen() {
     null
   );
   const [isFabMenuExpanded, setIsFabMenuExpanded] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [isArticleModalVisible, setIsArticleModalVisible] = useState(false);
 
   const handleCategorySelect = (category: Category | null) => {
     setSelectedCategory(category);
@@ -44,10 +46,13 @@ function HomeScreen() {
   };
 
   const navigateToArticle = (article: Article) => {
-    router.push({
-      pathname: '/article/[id]',
-      params: { id: article.id.toString() },
-    });
+    setSelectedArticle(article);
+    setIsArticleModalVisible(true);
+  };
+
+  const closeArticleModal = () => {
+    setIsArticleModalVisible(false);
+    setTimeout(() => setSelectedArticle(null), 300); // Clear after animation
   };
 
   const showFilterBottomSheet = () => {
@@ -217,6 +222,13 @@ function HomeScreen() {
           onFilterTap={showFilterBottomSheet}
         />
       </View>
+
+      {/* Article Modal */}
+      <ArticleModal
+        article={selectedArticle}
+        visible={isArticleModalVisible}
+        onClose={closeArticleModal}
+      />
     </View>
   );
 }
