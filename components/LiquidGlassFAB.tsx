@@ -2,7 +2,7 @@ import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
-import { AppColors } from '../theme';
+import { AppColors, LiquidGlassConfig } from '../theme';
 
 interface LiquidGlassFABProps {
   isExpanded: boolean;
@@ -48,11 +48,10 @@ export function LiquidGlassFAB({
       ]}
     >
       <LiquidGlassView
-        interactive
-        effect="clear"
+        effect={LiquidGlassConfig.effect}
         style={[
           styles.glassContainer,
-          !isLiquidGlassSupported && { backgroundColor: 'rgba(0, 0, 0, 0.7)' }
+          !isLiquidGlassSupported && { backgroundColor: LiquidGlassConfig.fallbackBackgroundColor }
         ]}
       >
         <View style={styles.content}>
@@ -65,7 +64,7 @@ export function LiquidGlassFAB({
               <Ionicons
                 name="search"
                 size={24}
-                color={AppColors.surface}
+                color={AppColors.primaryText}
               />
             </Pressable>
           )}
@@ -79,7 +78,7 @@ export function LiquidGlassFAB({
               <Ionicons
                 name="filter"
                 size={24}
-                color={AppColors.surface}
+                color={AppColors.primaryText}
               />
             </Pressable>
           )}
@@ -95,7 +94,7 @@ export function LiquidGlassFAB({
             <Ionicons
               name={isExpanded ? 'close' : 'ellipsis-horizontal'}
               size={24}
-              color={AppColors.surface}
+              color={AppColors.primaryText}
             />
           </Pressable>
         </View>
@@ -105,6 +104,16 @@ export function LiquidGlassFAB({
 }
 
 const styles = StyleSheet.create({
+    glassContainer: {
+    flex: 1,
+    borderRadius: 30,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.4,
+    shadowRadius: 40,
+    elevation: 20,
+  },
   container: {
     width: 56,
     borderRadius: 28,
@@ -116,12 +125,6 @@ const styles = StyleSheet.create({
       height: 6,
     },
     elevation: 8,
-  },
-  glassContainer: {
-    flex: 1,
-    borderRadius: 28,
-    overflow: 'hidden',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   content: {
     flex: 1,
@@ -143,6 +146,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     marginHorizontal: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
   },
 });

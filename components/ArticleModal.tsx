@@ -1,17 +1,19 @@
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-  Dimensions,
-  Image,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    Modal,
+    PanResponder,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import { Article } from '../models';
-import { AppColors, AppSpacing, AppTextStyles } from '../theme';
+import { AppColors, AppSpacing, AppTextStyles, LiquidGlassConfig } from '../theme';
 import CategoryChip from './CategoryChip';
 
 interface ArticleModalProps {
@@ -25,12 +27,80 @@ const isMobile = width < 768;
 const modalMaxWidth = isMobile ? width - 32 : 800;
 
 export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
+  const translateX = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     if (!visible && !article) {
-      // Reset animations when modal is fully closed
+      // Reset position when modal is fully closed
+      translateX.setValue(0);
       return;
     }
-  }, [visible, article]);
+  }, [visible, article, translateX]);
+
+  // Pan responder for swipe gestures (horizontal only)
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => false,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // Only respond to horizontal swipes with stronger horizontal movement
+        const isHorizontal = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 2;
+        const isSignificant = Math.abs(gestureState.dx) > 15;
+        return isHorizontal && isSignificant;
+      },
+      onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+        // Same logic for capture phase
+        const isHorizontal = Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 2;
+        const isSignificant = Math.abs(gestureState.dx) > 15;
+        return isHorizontal && isSignificant;
+      },
+      onPanResponderGrant: () => {
+        // Touch started
+      },
+      onPanResponderMove: (_, gestureState) => {
+        // Only move if it's clearly horizontal
+        if (Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 1.5) {
+          translateX.setValue(gestureState.dx);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const swipeThreshold = 120;
+        const velocityThreshold = 0.5;
+        
+        // Close if swiped far enough OR fast enough
+        const shouldClose = 
+          Math.abs(gestureState.dx) > swipeThreshold || 
+          Math.abs(gestureState.vx) > velocityThreshold;
+
+        if (shouldClose) {
+          Animated.timing(translateX, {
+            toValue: gestureState.dx > 0 ? width : -width,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            onClose();
+          });
+        } else {
+          // Spring back to original position
+          Animated.spring(translateX, {
+            toValue: 0,
+            tension: 40,
+            friction: 8,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+      onPanResponderTerminate: () => {
+        // Gesture was interrupted, reset position
+        Animated.spring(translateX, {
+          toValue: 0,
+          tension: 40,
+          friction: 8,
+          useNativeDriver: true,
+        }).start();
+      },
+    })
+  ).current;
 
   if (!article) return null;
 
@@ -50,17 +120,35 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
     >
       <View style={styles.modalContainer}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={styles.modalContent} pointerEvents="box-none">
+        <Animated.View 
+          style={[
+            styles.modalContent,
+            { transform: [{ translateX }] }
+          ]}
+        >
           <LiquidGlassView
             interactive
-            effect="clear"
+            effect={LiquidGlassConfig.effect}
             style={[
               styles.glassContainer,
               !isLiquidGlassSupported && styles.glassContainerFallback
             ]}
           >
+            {/* Left swipe zone */}
+            <View 
+              style={styles.swipeZoneLeft} 
+              {...panResponder.panHandlers}
+            />
+            
+            {/* Right swipe zone */}
+            <View 
+              style={styles.swipeZoneRight} 
+              {...panResponder.panHandlers}
+            />
+
             <ScrollView
               style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
               bounces={true}
             >
@@ -121,7 +209,7 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
               </View>
             </ScrollView>
           </LiquidGlassView>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -136,7 +224,11 @@ const styles = StyleSheet.create({
     paddingVertical: isMobile ? 40 : 60,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   modalContent: {
     width: '100%',
@@ -156,15 +248,33 @@ const styles = StyleSheet.create({
     elevation: 20,
   },
   glassContainerFallback: {
-    backgroundColor: AppColors.background,
+    backgroundColor: LiquidGlassConfig.fallbackBackgroundColor,
+  },
+  swipeZoneLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 40,
+    zIndex: 10,
+  },
+  swipeZoneRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 40,
+    zIndex: 10,
   },
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   content: {
     paddingHorizontal: AppSpacing.xl,
     paddingTop: AppSpacing.lg,
-    paddingBottom: AppSpacing.xl,
   },
   categoriesContainer: {
     flexDirection: 'row',
