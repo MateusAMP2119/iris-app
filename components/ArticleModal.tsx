@@ -1,15 +1,14 @@
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
-    Dimensions,
-    Image,
-    Modal,
-    PanResponder,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { Article } from '../models';
 import { AppColors, AppSpacing, AppTextStyles } from '../theme';
@@ -26,23 +25,6 @@ const isMobile = width < 768;
 const modalMaxWidth = isMobile ? width - 32 : 800;
 
 export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
-  // Pan responder for swipe gestures on the backdrop
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Only respond to horizontal swipes
-        return Math.abs(gestureState.dx) > 20;
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        // Close on left or right swipe (threshold of 100px)
-        if (Math.abs(gestureState.dx) > 100) {
-          onClose();
-        }
-      },
-    })
-  ).current;
-
   useEffect(() => {
     if (!visible && !article) {
       // Reset animations when modal is fully closed
@@ -66,9 +48,9 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <View style={styles.modalContainer} {...panResponder.panHandlers}>
+      <View style={styles.modalContainer}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={styles.modalContent}>
+        <View style={styles.modalContent} pointerEvents="box-none">
           <LiquidGlassView
             interactive
             effect="clear"
