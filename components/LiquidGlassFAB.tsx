@@ -30,7 +30,7 @@ export function LiquidGlassFAB({
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [isExpanded]);
+  }, [animatedHeight, isExpanded]);
 
   return (
     <Animated.View

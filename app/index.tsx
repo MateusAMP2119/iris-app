@@ -128,7 +128,10 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+      >
         {/* Masthead - Compact Newspaper Header */}
         <View style={styles.masthead}>
           <View style={styles.mastheadRow}>
@@ -147,10 +150,7 @@ function HomeScreen() {
           >
             <Pressable
               onPress={() => handleCategorySelect(null)}
-              style={[
-                styles.navItem,
-                selectedCategory === null && styles.navItemActive,
-              ]}
+              style={styles.navItem}
             >
               <Text
                 style={[
@@ -165,10 +165,7 @@ function HomeScreen() {
               <Pressable
                 key={category.id}
                 onPress={() => handleCategorySelect(category)}
-                style={[
-                  styles.navItem,
-                  selectedCategory?.id === category.id && styles.navItemActive,
-                ]}
+                style={styles.navItem}
               >
                 <Text
                   style={[
@@ -190,13 +187,16 @@ function HomeScreen() {
               article={articles[0]}
               onTap={() => navigateToArticle(articles[0])}
             />
-          </View>
-        )}
-
-        {/* Section Divider */}
-        {articles.length > 1 && (
-          <View style={styles.sectionDivider}>
-            <View style={styles.dividerLine} />
+            {articles.length > 1 && (
+              <View style={styles.heroDivider}>
+                <Text style={styles.heroDividerText}>
+                  {selectedCategory 
+                    ? `${selectedCategory.name.toUpperCase()} • LATEST UPDATES` 
+                    : `TRENDING NOW • ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()}`
+                  }
+                </Text>
+              </View>
+            )}
           </View>
         )}
 
@@ -281,9 +281,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: AppColors.surface,
   },
-  navItemActive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-  },
   navText: {
     ...AppTextStyles.labelSmall,
     color: AppColors.surface,
@@ -300,21 +297,25 @@ const styles = StyleSheet.create({
   heroSection: {
     paddingHorizontal: pageMargin,
     paddingTop: AppSpacing.xl,
-    paddingBottom: AppSpacing.xl,
   },
-
-  // ========== SECTION DIVIDER ==========
-  sectionDivider: {
-    paddingHorizontal: pageMargin,
-  },
-  dividerLine: {
-    height: 4,
+  heroDivider: {
     backgroundColor: AppColors.primaryText,
+    paddingHorizontal: AppSpacing.md,
+    paddingVertical: AppSpacing.sm,
+    marginTop: AppSpacing.lg,
+    alignSelf: 'flex-start',
+  },
+  heroDividerText: {
+    ...AppTextStyles.labelSmall,
+    color: AppColors.surface,
+    fontWeight: '900',
+    letterSpacing: 2,
+    fontSize: 11,
   },
 
   // ========== ARTICLES SECTION ==========
   articlesSection: {
-    paddingTop: AppSpacing.xl,
+    paddingTop: AppSpacing.lg,
     paddingHorizontal: isMobile ? pageMargin : 0,
   },
   columnsContainer: {

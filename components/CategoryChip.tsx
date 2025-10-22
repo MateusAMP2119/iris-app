@@ -11,8 +11,8 @@ interface CategoryChipProps {
 
 export default function CategoryChip({ category, isSelected, onTap }: CategoryChipProps) {
   return (
-    <Pressable onPress={onTap} style={[styles.chip, isSelected && styles.chipSelected]}>
-      <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+    <Pressable onPress={onTap} style={[styles.chip]}>
+      <Text style={[styles.chipText]}>
         {category.name.toUpperCase()}
       </Text>
     </Pressable>
@@ -28,9 +28,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  chipSelected: {
-    backgroundColor: AppColors.primaryText,
   },
   chipText: {
     ...AppTextStyles.labelSmall,
