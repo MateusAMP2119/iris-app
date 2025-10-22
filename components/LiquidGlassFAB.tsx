@@ -1,7 +1,11 @@
-import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
+import {
+  LiquidGlassContainerView,
+  LiquidGlassView,
+  isLiquidGlassSupported,
+} from '@callstack/liquid-glass';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet } from 'react-native';
 import { AppColors, LiquidGlassConfig } from '../theme';
 
 interface LiquidGlassFABProps {
@@ -17,135 +21,183 @@ export function LiquidGlassFAB({
   onSearchTap,
   onFilterTap,
 }: LiquidGlassFABProps) {
-  const collapsedHeight = 56;
-  const expandedHeight = 183;
+  const [spacingValue, setSpacingValue] = React.useState(0);
+  const spacing = React.useRef(new Animated.Value(0)).current;
+  const searchOpacity = React.useRef(new Animated.Value(0)).current;
+  const searchScale = React.useRef(new Animated.Value(0)).current;
+  const filterOpacity = React.useRef(new Animated.Value(0)).current;
+  const filterScale = React.useRef(new Animated.Value(0)).current;
+  const shadowOpacity = React.useRef(new Animated.Value(0.1)).current;
+  const shadowRadius = React.useRef(new Animated.Value(20)).current;
+  const shadowOffsetY = React.useRef(new Animated.Value(6)).current;
 
-  const animatedHeight = React.useRef(
-    new Animated.Value(collapsedHeight)
-  ).current;
-
+  // Set up listener only once
   React.useEffect(() => {
-    Animated.timing(animatedHeight, {
-      toValue: isExpanded ? expandedHeight : collapsedHeight,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [animatedHeight, isExpanded]);
+    const listenerId = spacing.addListener(({ value }) => {
+      setSpacingValue(value);
+    });
+
+    return () => {
+      spacing.removeListener(listenerId);
+    };
+  }, [spacing]);
+
+  // Handle animations separately
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.spring(spacing, {
+        toValue: isExpanded ? 12 : 0,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: false,
+      }),
+      Animated.spring(searchOpacity, {
+        toValue: isExpanded ? 1 : 0,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+      Animated.spring(searchScale, {
+        toValue: isExpanded ? 1 : 0,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+      Animated.spring(filterOpacity, {
+        toValue: isExpanded ? 1 : 0,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+      Animated.spring(filterScale, {
+        toValue: isExpanded ? 1 : 0,
+        tension: 40,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shadowOpacity, {
+        toValue: isExpanded ? 0.15 : 0.1,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(shadowRadius, {
+        toValue: isExpanded ? 30 : 20,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(shadowOffsetY, {
+        toValue: isExpanded ? 10 : 6,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [
+    isExpanded,
+    spacing,
+    searchOpacity,
+    searchScale,
+    filterOpacity,
+    filterScale,
+    shadowOpacity,
+    shadowRadius,
+    shadowOffsetY,
+  ]);
+
+  const animatedShadowStyle = {
+    shadowOpacity,
+    shadowRadius,
+    shadowOffset: {
+      width: 0,
+      height: shadowOffsetY,
+    },
+  };
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          height: animatedHeight,
-          shadowOpacity: isExpanded ? 0.15 : 0.1,
-          shadowRadius: isExpanded ? 30 : 20,
-          shadowOffset: {
-            width: 0,
-            height: isExpanded ? 10 : 6,
-          },
-        },
-      ]}
-    >
-      <LiquidGlassView
-        effect={LiquidGlassConfig.effect}
-        style={[
-          styles.glassContainer,
-          !isLiquidGlassSupported && { backgroundColor: LiquidGlassConfig.fallbackBackgroundColor }
-        ]}
-      >
-        <View style={styles.content}>
-          {/* Search button */}
-          {isExpanded && (
-            <Pressable
-              style={[styles.button, styles.topButton]}
-              onPress={onSearchTap}
-            >
-              <Ionicons
-                name="search"
-                size={24}
-                color={AppColors.primaryText}
-              />
-            </Pressable>
-          )}
-
-          {/* Separator */}
-          {isExpanded && <View style={styles.separator} />}
-
-          {/* Filter button */}
-          {isExpanded && (
-            <Pressable style={styles.button} onPress={onFilterTap}>
-              <Ionicons
-                name="filter"
-                size={24}
-                color={AppColors.primaryText}
-              />
-            </Pressable>
-          )}
-
-          {/* Separator */}
-          {isExpanded && <View style={styles.separator} />}
-
-          {/* Main toggle button */}
-          <Pressable
-            style={[styles.button, styles.mainButton]}
-            onPress={onToggle}
+    <Animated.View style={[styles.container, animatedShadowStyle]}>
+      <LiquidGlassContainerView spacing={spacingValue}>
+        {/* Search button circle */}
+        <Animated.View
+          style={{
+            opacity: searchOpacity,
+            transform: [{ scale: searchScale }],
+          }}
+          pointerEvents={isExpanded ? 'auto' : 'none'}
+        >
+          <LiquidGlassView
+            effect={LiquidGlassConfig.effect}
+            interactive
+            style={[
+              styles.circle,
+              !isLiquidGlassSupported && styles.circleFallback,
+            ]}
           >
+            <Pressable style={styles.button} onPress={onSearchTap}>
+              <Ionicons name="search" size={24} color={AppColors.primaryText} />
+            </Pressable>
+          </LiquidGlassView>
+        </Animated.View>
+
+        {/* Filter button circle */}
+        <Animated.View
+          style={{
+            opacity: filterOpacity,
+            transform: [{ scale: filterScale }],
+          }}
+          pointerEvents={isExpanded ? 'auto' : 'none'}
+        >
+          <LiquidGlassView
+            effect={LiquidGlassConfig.effect}
+            interactive
+            style={[
+              styles.circle,
+              !isLiquidGlassSupported && styles.circleFallback,
+            ]}
+          >
+            <Pressable style={styles.button} onPress={onFilterTap}>
+              <Ionicons name="filter" size={24} color={AppColors.primaryText} />
+            </Pressable>
+          </LiquidGlassView>
+        </Animated.View>
+
+        {/* Main toggle button circle */}
+        <LiquidGlassView
+          effect={LiquidGlassConfig.effect}
+          interactive
+          style={[
+            styles.circle,
+            !isLiquidGlassSupported && styles.circleFallback,
+          ]}
+        >
+          <Pressable style={styles.button} onPress={onToggle}>
             <Ionicons
               name={isExpanded ? 'close' : 'ellipsis-horizontal'}
               size={24}
               color={AppColors.primaryText}
             />
           </Pressable>
-        </View>
-      </LiquidGlassView>
+        </LiquidGlassView>
+      </LiquidGlassContainerView>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-    glassContainer: {
-    flex: 1,
-    borderRadius: 30,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.4,
-    shadowRadius: 40,
-    elevation: 20,
-  },
   container: {
-    width: 56,
-    borderRadius: 28,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
     elevation: 8,
   },
-  content: {
-    flex: 1,
+  circle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  circleFallback: {
+    backgroundColor: LiquidGlassConfig.fallbackBackgroundColor,
   },
   button: {
-    height: 54,
+    width: 56,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  topButton: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-  },
-  mainButton: {
-    flex: 1,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-  },
-  separator: {
-    height: 1,
-    marginHorizontal: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.15)',
   },
 });

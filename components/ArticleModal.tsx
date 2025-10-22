@@ -1,17 +1,19 @@
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
 import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Image,
-    Modal,
-    PanResponder,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  Modal,
+  PanResponder,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Article } from '../models';
 import { AppColors, AppSpacing, AppTextStyles, LiquidGlassConfig } from '../theme';
 import CategoryChip from './CategoryChip';
@@ -22,12 +24,13 @@ interface ArticleModalProps {
   onClose: () => void;
 }
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const isMobile = width < 768;
 const modalMaxWidth = isMobile ? width - 32 : 800;
 
 export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
   const translateX = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!visible && !article) {
@@ -110,6 +113,9 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
     day: 'numeric',
   });
 
+  const topPadding = Platform.OS === 'ios' ? Math.max(insets.top, 20) : 20;
+  const bottomPadding = Platform.OS === 'ios' ? Math.max(insets.bottom, 20) : 20;
+
   return (
     <Modal
       visible={visible}
@@ -118,7 +124,13 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <View style={styles.modalContainer}>
+      <View style={[
+        styles.modalContainer,
+        {
+          paddingTop: topPadding,
+          paddingBottom: bottomPadding,
+        }
+      ]}>
         <Pressable style={styles.backdrop} onPress={onClose} />
         <Animated.View 
           style={[
@@ -221,7 +233,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: isMobile ? 16 : 32,
-    paddingVertical: isMobile ? 40 : 60,
   },
   backdrop: {
     position: 'absolute',
@@ -233,8 +244,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '100%',
     maxWidth: modalMaxWidth,
-    height: '100%',
-    maxHeight: height - (isMobile ? 80 : 120),
+    flex: 1,
     zIndex: 1,
   },
   glassContainer: {
