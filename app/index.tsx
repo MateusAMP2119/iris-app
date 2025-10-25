@@ -315,7 +315,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: AppSpacing.md,
     paddingVertical: AppSpacing.sm,
     marginTop: AppSpacing.lg,
-    alignSelf: 'flex-start',
+    marginLeft: -pageMargin,
+    marginRight: -pageMargin,
+    paddingLeft: pageMargin,
+    paddingRight: isMobile ? 100 : 120, // Leave space for FAB
   },
   heroDividerText: {
     ...AppTextStyles.labelSmall,
