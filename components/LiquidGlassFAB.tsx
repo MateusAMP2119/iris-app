@@ -1,12 +1,23 @@
-import {
-  LiquidGlassContainerView,
-  LiquidGlassView,
-  isLiquidGlassSupported,
-} from '@callstack/liquid-glass';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Animated, Pressable, StyleSheet } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { AppColors, LiquidGlassConfig } from '../theme';
+
+// Gracefully handle LiquidGlass import for compatibility
+let LiquidGlassContainerView: any = View;
+let LiquidGlassView: any = View;
+let isLiquidGlassSupported = false;
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const liquidGlass = require('@callstack/liquid-glass');
+  LiquidGlassContainerView = liquidGlass.LiquidGlassContainerView || View;
+  LiquidGlassView = liquidGlass.LiquidGlassView || View;
+  isLiquidGlassSupported = liquidGlass.isLiquidGlassSupported || false;
+} catch {
+  // LiquidGlass not available on this platform/version
+  console.warn('LiquidGlass not available, using fallback');
+}
 
 interface LiquidGlassFABProps {
   isExpanded: boolean;

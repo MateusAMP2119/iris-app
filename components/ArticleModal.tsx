@@ -1,4 +1,3 @@
-import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -17,6 +16,20 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Article } from '../models';
 import { AppColors, AppSpacing, AppTextStyles, LiquidGlassConfig } from '../theme';
 import CategoryChip from './CategoryChip';
+
+// Gracefully handle LiquidGlass import for compatibility
+let LiquidGlassView: any = View;
+let isLiquidGlassSupported = false;
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const liquidGlass = require('@callstack/liquid-glass');
+  LiquidGlassView = liquidGlass.LiquidGlassView || View;
+  isLiquidGlassSupported = liquidGlass.isLiquidGlassSupported || false;
+} catch {
+  // LiquidGlass not available on this platform/version
+  console.warn('LiquidGlass not available, using fallback');
+}
 
 interface ArticleModalProps {
   article: Article | null;
