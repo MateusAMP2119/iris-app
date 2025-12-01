@@ -1,352 +1,270 @@
 {
   "designSystem": {
-    "metadata": {
-      "purpose": "Extract visual design patterns and systems from editorial and web layouts",
-      "usage": "Provide AI context for replicating consistent design systems",
-      "version": "1.0"
+    "name": "News Aggregator App Design System",
+    "version": "1.0",
+    "overview": {
+      "designPhilosophy": "Minimalist, content-focused design that respects user time with clean typography, generous whitespace, and clear information hierarchy",
+      "targetPlatform": "iOS mobile application",
+      "primaryPurpose": "Curated news consumption with read-later functionality"
     },
-    "layouts": [
-      {
-        "id": "editorial_newspaper",
-        "type": "Print Editorial",
-        "description": "Traditional newspaper/magazine layout with hierarchical content structure",
-        "gridSystem": {
-          "type": "Multi-column grid",
-          "columns": "3-5 flexible columns",
-          "gutters": "Medium spacing (15-20px equivalent)",
-          "alignment": "Justified and left-aligned text blocks"
+    "typography": {
+      "primaryFont": "SF Pro (System Font)",
+      "hierarchy": {
+        "display": {
+          "size": "34-40px",
+          "weight": "700-800 (Bold/Heavy)",
+          "usage": "Main headings, section titles",
+          "examples": ["News.", "Breaking News", "Read Later"]
         },
-        "hierarchy": {
-          "primary": "Large hero image with prominent headline",
-          "secondary": "Multiple story blocks with supporting images",
-          "tertiary": "Sidebar content, weather, date information"
+        "title": {
+          "size": "20-24px",
+          "weight": "600-700 (Semibold/Bold)",
+          "usage": "Article headlines, card titles",
+          "lineHeight": "1.2-1.3"
         },
-        "typography": {
-          "masthead": {
-            "style": "Bold, high-contrast, serif or heavy sans-serif",
-            "weight": "Black or Extra Bold",
-            "size": "Very large (72-120pt equivalent)"
-          },
-          "headlines": {
-            "primary": "Bold serif, 36-48pt equivalent",
-            "secondary": "Medium weight serif, 24-30pt equivalent",
-            "tertiary": "Regular weight, 14-18pt equivalent"
-          },
-          "body": {
-            "font": "Serif for readability",
-            "size": "9-11pt equivalent",
-            "lineHeight": "1.4-1.6",
-            "columns": "Narrow columns for easy scanning"
-          },
-          "captions": {
-            "style": "Small sans-serif or light serif",
-            "size": "8-9pt equivalent"
-          }
+        "body": {
+          "size": "15-17px",
+          "weight": "400 (Regular)",
+          "usage": "Descriptions, article previews",
+          "lineHeight": "1.4-1.5"
         },
-        "colorPalette": {
-          "primary": "Black text on white/cream background",
-          "accent": "Minimal use of color (red, blue for highlights)",
-          "contrast": "High contrast for readability"
-        },
-        "spacing": {
-          "articleGaps": "Thick black or colored divider lines",
-          "sectionBreaks": "Clear visual separation with rules",
-          "margins": "Moderate to tight margins"
-        },
-        "imageUsage": {
-          "style": "Photojournalistic, documentary",
-          "treatment": "Black and white or muted color",
-          "proportion": "Various sizes, often rectangular",
-          "placement": "Integrated with text, breaking columns"
+        "caption": {
+          "size": "13-14px",
+          "weight": "400 (Regular)",
+          "usage": "Dates, metadata, secondary information",
+          "color": "rgba(0,0,0,0.5)"
         }
       },
-      {
-        "id": "vintage_newspaper_feature",
-        "type": "Feature Article Layout",
-        "description": "Long-form editorial with vintage aesthetic",
-        "gridSystem": {
-          "type": "Asymmetric column layout",
-          "columns": "2-3 main columns with sidebar",
-          "emphasis": "Vertical flow with clear reading path"
-        },
-        "hierarchy": {
-          "title": "Centered or left-aligned large headline",
-          "subtitle": "Supporting deck or subheadline",
-          "sections": "Boxed sections for supplementary content"
-        },
-        "typography": {
-          "display": {
-            "style": "Serif, elegant, traditional",
-            "characteristics": "High x-height, classic proportions"
-          },
-          "emphasis": {
-            "method": "Bold weight, italic, or all-caps for section headers",
-            "quotes": "Larger pull quotes in serif"
-          }
-        },
-        "colorPalette": {
-          "base": "Black on aged white/cream/beige",
-          "texture": "Paper texture, aged appearance",
-          "accents": "Minimal, possibly single accent color"
-        },
-        "decorativeElements": {
-          "borders": "Thin rule lines",
-          "boxes": "Outlined content boxes",
-          "ornamentation": "Minimal decorative flourishes"
-        },
-        "imageUsage": {
-          "style": "Black and white photography",
-          "treatment": "High contrast, grainy texture",
-          "framing": "Clean edges, no effects"
-        }
-      },
-      {
-        "id": "modern_ecommerce_landing",
-        "type": "E-commerce Landing Page",
-        "description": "Modern, clean e-commerce design with card-based layout",
-        "gridSystem": {
-          "type": "Card grid system",
-          "responsive": "Flexible grid adapting to viewport",
-          "columns": "2-4 columns depending on screen size",
-          "cardSpacing": "Consistent gaps between cards"
-        },
-        "hierarchy": {
-          "hero": "Large hero section with headline and CTA",
-          "features": "Icon-based feature highlights",
-          "content": "Card-based content modules",
-          "social": "Testimonial/review cards"
-        },
-        "typography": {
-          "headlines": {
-            "style": "Bold sans-serif, high impact",
-            "weight": "Heavy to Black weight",
-            "size": "Large scale (48-72px)",
-            "casing": "Often uppercase for emphasis"
-          },
-          "body": {
-            "style": "Clean sans-serif",
-            "weight": "Regular to Medium",
-            "size": "16-18px",
-            "lineHeight": "1.5-1.7"
-          },
-          "cta": {
-            "style": "Bold, uppercase or sentence case",
-            "prominence": "High contrast, clear action words"
-          }
-        },
-        "colorPalette": {
-          "scheme": "Limited palette (2-3 main colors)",
-          "primary": "Bold, vibrant accent color",
-          "neutral": "White, light grays, dark grays/black",
-          "contrast": "High contrast for CTAs"
-        },
-        "spacing": {
-          "sections": "Large whitespace between sections",
-          "padding": "Generous padding in cards and containers",
-          "rhythm": "Consistent vertical rhythm"
-        },
-        "components": {
-          "cards": {
-            "style": "Clean rectangles with subtle shadows or borders",
-            "imageRatio": "Consistent aspect ratios (16:9, 4:3, 1:1)",
-            "content": "Image + headline + brief text + CTA"
-          },
-          "buttons": {
-            "style": "Solid fills or outlined",
-            "shape": "Rounded corners (4-8px radius)",
-            "size": "Large, finger-friendly"
-          },
-          "icons": {
-            "style": "Line icons or simple filled shapes",
-            "usage": "Feature highlights, navigation, CTAs"
-          }
-        },
-        "imageUsage": {
-          "style": "Lifestyle photography, product shots",
-          "treatment": "Bright, colorful, high quality",
-          "consistency": "Uniform styling across images"
-        }
-      },
-      {
-        "id": "editorial_tablet_magazine",
-        "type": "Digital Magazine Layout",
-        "description": "Modern editorial design with strong grid and typography",
-        "gridSystem": {
-          "type": "Modular grid system",
-          "structure": "Strict grid with modules of varying sizes",
-          "columns": "Multi-column (4-6 columns)",
-          "flexibility": "Content spans multiple modules"
-        },
-        "hierarchy": {
-          "organization": "Clear section headers",
-          "visual": "Size and position indicate importance",
-          "navigation": "Sidebar or top navigation elements"
-        },
-        "typography": {
-          "headlines": {
-            "style": "Mix of serif and sans-serif",
-            "weight": "Bold to Black",
-            "size": "Very large display type",
-            "spacing": "Tight letter-spacing"
-          },
-          "body": {
-            "style": "Serif for long-form reading",
-            "columns": "Multi-column text blocks",
-            "size": "10-12pt",
-            "lineHeight": "1.5-1.8"
-          },
-          "labels": {
-            "style": "Small caps or uppercase sans-serif",
-            "color": "Often in accent color",
-            "weight": "Medium to Bold"
-          }
-        },
-        "colorPalette": {
-          "base": "Black text on cream/off-white",
-          "accent": "1-2 accent colors (often warm tones)",
-          "distribution": "Accent colors in headers, boxes, highlights"
-        },
-        "spacing": {
-          "precision": "Mathematically consistent spacing",
-          "whitespace": "Generous margins and gutters",
-          "density": "Balanced density across layout"
-        },
-        "decorativeElements": {
-          "rules": "Thin or thick rule lines for separation",
-          "boxes": "Colored or outlined content containers",
-          "numbers": "Large decorative numbers for lists/dates"
-        },
-        "imageUsage": {
-          "style": "Mixed - photography and illustrations",
-          "treatment": "Black and white or limited color",
-          "integration": "Images break grid or align precisely"
-        }
-      },
-      {
-        "id": "modern_content_portal",
-        "type": "Content-Heavy Web Portal",
-        "description": "Modern web design with bold typography and card-based modules",
-        "gridSystem": {
-          "type": "Flexible modular grid",
-          "responsive": "Fully responsive with breakpoints",
-          "cards": "Variable-sized card modules",
-          "flow": "Vertical stacking on mobile, multi-column on desktop"
-        },
-        "hierarchy": {
-          "hero": "Full-width hero with large headline",
-          "quotes": "Large typographic quotes as section breaks",
-          "content": "Mixed module sizes for visual interest",
-          "cta": "Prominent call-to-action sections"
-        },
-        "typography": {
-          "display": {
-            "style": "Bold sans-serif, modern grotesque",
-            "weight": "Black or Extra Bold",
-            "size": "Very large (56-96px)",
-            "color": "Often white on images or dark backgrounds"
-          },
-          "body": {
-            "style": "Sans-serif, clean and legible",
-            "weight": "Regular to Medium",
-            "size": "16-20px"
-          },
-          "labels": {
-            "style": "Uppercase sans-serif",
-            "weight": "Medium to Bold",
-            "size": "12-14px",
-            "letterSpacing": "Wide tracking"
-          }
-        },
-        "colorPalette": {
-          "scheme": "Bold, vibrant color scheme",
-          "primary": "1-2 strong brand colors",
-          "backgrounds": "White, dark gray/black, colored sections",
-          "contrast": "Strong contrast for readability"
-        },
-        "spacing": {
-          "sections": "Large vertical spacing between sections",
-          "cards": "Medium gaps between cards (20-30px)",
-          "padding": "Generous internal padding (40-60px)"
-        },
-        "components": {
-          "imageCards": {
-            "style": "Image with text overlay or below",
-            "overlay": "Gradient or solid color overlay on images",
-            "corners": "Rounded corners (8-16px)",
-            "hover": "Subtle hover effects (scale, opacity)"
-          },
-          "buttons": {
-            "style": "Circular icon buttons or rounded rectangles",
-            "treatment": "Solid or outlined with icons",
-            "size": "Large, accessible sizing"
-          },
-          "sections": {
-            "alternating": "Alternating colored backgrounds",
-            "fullWidth": "Full-width sections with contained content"
-          }
-        },
-        "imageUsage": {
-          "style": "Lifestyle and fashion photography",
-          "treatment": "Color with overlays or filters",
-          "aspectRatios": "Various ratios for visual rhythm",
-          "quality": "High-resolution, professional"
-        }
-      }
-    ],
-    "commonPatterns": {
-      "containerWidth": {
-        "fullWidth": "100% viewport width",
-        "contained": "1200-1400px max-width with auto margins",
-        "narrow": "600-800px for reading content"
-      },
-      "responsiveBreakpoints": {
-        "mobile": "320-767px",
-        "tablet": "768-1023px",
-        "desktop": "1024px+"
-      },
-      "cardDesign": {
-        "shadow": "Subtle box-shadow (0 2px 8px rgba(0,0,0,0.1))",
-        "border": "1px solid light gray or no border",
-        "radius": "4-16px rounded corners",
-        "padding": "20-40px internal padding"
-      },
-      "buttons": {
-        "primary": "Solid background, white text, brand color",
-        "secondary": "Outlined, transparent background, brand color border",
-        "sizes": "Small (32-36px), Medium (40-48px), Large (52-60px height)",
-        "radius": "4-8px rounded corners"
-      },
-      "navigationPatterns": {
-        "horizontal": "Top navigation bar with logo left, menu right",
-        "sidebar": "Vertical sidebar navigation",
-        "hamburger": "Mobile hamburger menu icon"
-      }
-    },
-    "designPrinciples": {
-      "clarity": "Clear visual hierarchy guides user attention",
-      "consistency": "Consistent spacing, typography, and components",
-      "contrast": "Strong contrast for readability and emphasis",
-      "whitespace": "Generous whitespace prevents visual clutter",
-      "alignment": "Precise grid alignment creates order",
-      "typography": "Typography as primary design element",
-      "imagery": "High-quality images that support content",
-      "color": "Limited, purposeful color palette",
-      "responsiveness": "Fluid layouts that adapt to screen size",
-      "accessibility": "Readable fonts, sufficient contrast, clear hierarchy"
-    },
-    "implementationGuidelines": {
-      "forAI": [
-        "Identify layout type first (editorial, e-commerce, content portal)",
-        "Apply appropriate grid system and column structure",
-        "Establish clear typographic hierarchy with specified weights and sizes",
-        "Use color palette sparingly and purposefully",
-        "Implement consistent spacing using multipliers of base unit (8px)",
-        "Create modular, reusable components",
-        "Ensure responsive behavior at standard breakpoints",
-        "Maintain high contrast for readability",
-        "Use whitespace generously for breathing room",
-        "Balance visual weight across the layout"
+      "principles": [
+        "High contrast for readability",
+        "Generous line spacing",
+        "Limited font weights for clarity",
+        "Left-aligned text throughout"
       ]
+    },
+    "colorPalette": {
+      "primary": {
+        "background": "#FFFFFF",
+        "text": "#000000",
+        "description": "Pure black on white for maximum readability"
+      },
+      "secondary": {
+        "gray100": "#F5F5F5",
+        "gray200": "#E5E5E5",
+        "gray400": "#999999",
+        "gray600": "#666666",
+        "description": "Subtle grays for backgrounds and dividers"
+      },
+      "accent": {
+        "primary": "#FF2D55",
+        "description": "Bright pink/red for active states, bookmarks, and CTAs"
+      },
+      "semantic": {
+        "cardBackground": "#FFFFFF",
+        "divider": "rgba(0,0,0,0.1)",
+        "shadow": "rgba(0,0,0,0.08)"
+      }
+    },
+    "spacing": {
+      "scale": "8px base unit",
+      "values": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px",
+        "2xl": "48px"
+      },
+      "application": {
+        "screenPadding": "16-20px horizontal",
+        "cardPadding": "16-20px all sides",
+        "elementSpacing": "12-16px between related items",
+        "sectionSpacing": "32-48px between major sections"
+      }
+    },
+    "layout": {
+      "grid": {
+        "type": "Flexible single column with cards",
+        "columns": 1,
+        "gutters": "16-20px",
+        "maxWidth": "100% of screen minus padding"
+      },
+      "principles": [
+        "Single column for mobile-first approach",
+        "Card-based content organization",
+        "Generous whitespace between sections",
+        "Clear visual hierarchy through size and spacing"
+      ]
+    },
+    "components": {
+      "navigationBar": {
+        "position": "Bottom of screen",
+        "height": "80-90px including safe area",
+        "style": "Transparent background with icons",
+        "items": [
+          {
+            "type": "Icon button",
+            "iconStyle": "Line icons or filled when active",
+            "labels": ["Today", "For You", "For Later", "Search"],
+            "activeState": "Accent color fill with label"
+          }
+        ]
+      },
+      "card": {
+        "variants": {
+          "newsCard": {
+            "structure": [
+              "Featured image (16:9 or 4:3 aspect ratio)",
+              "Source logo/name (small, top left)",
+              "Headline (bold, 2-3 lines max)",
+              "Date/timestamp (small, gray)",
+              "Bookmark icon (top right, optional)"
+            ],
+            "background": "#FFFFFF",
+            "borderRadius": "12-16px",
+            "shadow": "0 2px 8px rgba(0,0,0,0.08)",
+            "padding": "0 (image full bleed) + 16px for text content",
+            "margin": "12-16px between cards"
+          },
+          "readLaterCard": {
+            "structure": [
+              "Source publication name/logo",
+              "Article headline (2-3 lines)",
+              "Thumbnail image (square, aligned right)",
+              "Date (small, gray, below headline)"
+            ],
+            "layout": "Horizontal with thumbnail on right",
+            "background": "#FFFFFF",
+            "borderRadius": "12px",
+            "padding": "16px",
+            "imageSize": "80x80px approximately"
+          }
+        },
+        "interactions": {
+          "tap": "Navigate to article",
+          "longPress": "Context menu for share/save",
+          "swipe": "Reveal actions (optional)"
+        }
+      },
+      "headerSection": {
+        "structure": [
+          "Large title (34-40px, bold)",
+          "Optional subtitle/description (15-17px, regular)",
+          "Generous top padding (24-32px)"
+        ],
+        "alignment": "Left",
+        "background": "Transparent or subtle gray"
+      },
+      "sectionHeader": {
+        "structure": [
+          "Section title (20-24px, bold)",
+          "Optional chevron or 'view more' indicator"
+        ],
+        "spacing": "24px top margin, 16px bottom margin"
+      },
+      "imageContainer": {
+        "aspectRatios": ["16:9", "4:3", "1:1"],
+        "borderRadius": "12px (for cards) or 0 (for full bleed)",
+        "objectFit": "cover",
+        "loading": "Lazy load with placeholder"
+      },
+      "iconButton": {
+        "size": "44x44px minimum (touch target)",
+        "iconSize": "20-24px",
+        "style": "Line icons, 2px stroke",
+        "activeState": "Filled with accent color"
+      },
+      "sourceLabel": {
+        "structure": "Logo + text or badge",
+        "size": "Small (24-32px height)",
+        "position": "Top left of card or inline with headline",
+        "style": "High contrast with background"
+      },
+      "followingList": {
+        "structure": [
+          "Grid of circular source avatars (5 columns)",
+          "Source name below each avatar",
+          "List items below with chevrons"
+        ],
+        "avatarSize": "56-64px diameter",
+        "spacing": "12-16px between avatars",
+        "background": "#F5F5F5 or white"
+      }
+    },
+    "screens": {
+      "breakingNews": {
+        "layout": "Hero card + scrollable grid",
+        "sections": [
+          "Header (date, title)",
+          "Hero story (large image card)",
+          "Top Stories (2-column grid of cards)",
+          "Bottom navigation"
+        ]
+      },
+      "readLater": {
+        "layout": "Vertical list of saved articles",
+        "sections": [
+          "Header (title)",
+          "Scrollable list of horizontal cards",
+          "Bottom navigation"
+        ]
+      },
+      "following": {
+        "layout": "Source management screen",
+        "sections": [
+          "Following sources (circular avatars in grid)",
+          "Menu items (All Following, Discover, History)"
+        ]
+      }
+    },
+    "interactions": {
+      "animations": {
+        "cardTap": "Subtle scale (0.98) on press, spring back",
+        "navigation": "Slide transitions between screens",
+        "scrolling": "Smooth, native iOS scroll physics",
+        "loading": "Skeleton screens or subtle fade-in"
+      },
+      "gestures": [
+        "Tap: Select/open",
+        "Long press: Context menu",
+        "Swipe: Navigate or reveal actions",
+        "Pull to refresh: Update content"
+      ],
+      "feedback": {
+        "haptic": "Light haptic on button press",
+        "visual": "Accent color highlights for active states",
+        "transition": "Smooth 300-400ms duration"
+      }
+    },
+    "visualPrinciples": [
+      "Content is king: minimal chrome, maximum content",
+      "Generous whitespace for breathing room",
+      "High contrast for accessibility and readability",
+      "Consistent card metaphor throughout",
+      "Clear information hierarchy through size and weight",
+      "Single accent color for focus and consistency",
+      "Photography-forward with quality images",
+      "Bottom navigation for thumb-friendly access",
+      "No clutter: every element serves a purpose"
+    ],
+    "responsiveness": {
+      "approach": "Mobile-first, single column",
+      "breakpoints": "Designed for iPhone (375-428px width)",
+      "safeAreas": "Respects iOS safe areas (notch, home indicator)",
+      "orientation": "Primarily portrait, adapts to landscape"
+    },
+    "accessibility": {
+      "contrast": "WCAG AAA for body text (7:1 minimum)",
+      "touchTargets": "44x44px minimum",
+      "textScaling": "Supports dynamic type",
+      "voiceOver": "Semantic HTML/native elements for screen readers"
+    },
+    "contentGuidelines": {
+      "headlines": "2-3 lines maximum, clear and concise",
+      "descriptions": "1-2 sentences when present",
+      "dates": "Relative (Today) or absolute (Month DD, YYYY)",
+      "sources": "Always attributed with logo or name",
+      "images": "High quality, relevant to content, proper aspect ratios"
     }
   }
 }
