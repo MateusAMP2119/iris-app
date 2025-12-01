@@ -5,3 +5,4 @@ export { SectionHeader } from './SectionHeader';
 export { IconButton } from './IconButton';
 export { SkeletonCard, LoadingIndicator } from './Loading';
 export { EmptyState } from './EmptyState';
+export { LiquidGlassTabBar } from './LiquidGlassTabBar';

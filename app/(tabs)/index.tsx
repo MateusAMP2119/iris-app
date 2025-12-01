@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
 import { EmptyState, LoadingIndicator, NewsCard, SectionHeader } from '../../src/components';
 import { colors, layout, spacing, typography } from '../../src/constants/theme';
-import { useSavedArticles } from '../../src/contexts';
+import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -24,6 +24,7 @@ export default function TodayScreen() {
   const router = useRouter();
   const { articles, loading, error, refresh } = useNews(10);
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
+  const { handleScroll } = useTabBarVisibility();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -144,6 +145,8 @@ export default function TodayScreen() {
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.listContent}
         columnWrapperStyle={styles.columnWrapper}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

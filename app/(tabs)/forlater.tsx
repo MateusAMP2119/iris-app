@@ -12,7 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { ReadLaterCard, EmptyState, LoadingIndicator } from '../../src/components';
-import { useSavedArticles } from '../../src/contexts';
+import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { colors, spacing, layout, typography } from '../../src/constants/theme';
 import { getTimeAgo } from '../../models';
 import { SavedArticle } from '../../src/types';
@@ -20,6 +20,7 @@ import { SavedArticle } from '../../src/types';
 export default function ForLaterScreen() {
   const router = useRouter();
   const { savedArticles, removeArticle, loading } = useSavedArticles();
+  const { handleScroll } = useTabBarVisibility();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -107,6 +108,8 @@ export default function ForLaterScreen() {
           styles.listContent,
           savedArticles.length === 0 && styles.emptyListContent,
         ]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
-import { colors, sizes, spacing } from '../../src/constants/theme';
+import { colors, sizes } from '../../src/constants/theme';
+import { LiquidGlassTabBar } from '../../src/components';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
 
@@ -24,25 +24,11 @@ function TabBarIcon({ name, color }: TabBarIconProps) {
 export default function TabLayout() {
   return (
     <Tabs
+      tabBar={(props) => <LiquidGlassTabBar {...props} />}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.accent.primary,
         tabBarInactiveTintColor: colors.secondary.gray400,
-        tabBarStyle: {
-          backgroundColor: colors.semantic.navBackground,
-          borderTopColor: colors.semantic.divider,
-          borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? sizes.bottomNavHeight : 70,
-          paddingTop: spacing.sm,
-          paddingBottom: Platform.OS === 'ios' ? spacing.lg : spacing.md,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '400',
-        },
-        tabBarItemStyle: {
-          paddingTop: spacing.xs,
-        },
       }}
     >
       <Tabs.Screen
@@ -55,10 +41,6 @@ export default function TabLayout() {
               color={color}
             />
           ),
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: '600',
-          },
         }}
       />
       <Tabs.Screen

@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { NewsCard, EmptyState, LoadingIndicator } from '../../src/components';
-import { useSavedArticles } from '../../src/contexts';
+import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 import { colors, spacing, layout, typography, borderRadius } from '../../src/constants/theme';
 import { getTimeAgo, Article } from '../../models';
@@ -22,6 +22,7 @@ export default function SearchScreen() {
   const router = useRouter();
   const { articles, loading } = useNews(20);
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
+  const { handleScroll } = useTabBarVisibility();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -160,6 +161,8 @@ export default function SearchScreen() {
           styles.listContent,
           (!isSearching || filteredArticles.length === 0) && styles.emptyListContent,
         ]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       />
