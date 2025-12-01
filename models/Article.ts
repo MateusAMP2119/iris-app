@@ -1,60 +1,47 @@
-import { Category, categoryFromJson } from './Category';
-import { Source, sourceFromJson } from './Source';
+export interface Author {
+  authorId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Category {
+  categoryId: number;
+  categoryName: string;
+  isActive: boolean;
+  createdAt: string;
+}
 
 export interface Article {
-  id: number;
+  articleId: number;
   title: string;
+  subtitle: string | null;
   content: string;
+  authors: Author[];
+  categories: Category[];
   url: string;
-  sourceId: number;
-  publishedAt: Date;
-  scrapedAt: Date;
-
-  // Related entities
-  source?: Source;
-  categories?: Category[];
-
-  // Additional fields for UI
-  imageUrl?: string;
-  excerpt?: string;
-  author?: string;
+  status: string;
+  publicationDate: string;
+  isFeatured: boolean | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export function articleFromJson(json: any): Article {
-  return {
-    id: json.id,
-    title: json.title,
-    content: json.content,
-    url: json.url,
-    sourceId: json.source_id,
-    publishedAt: new Date(json.published_at),
-    scrapedAt: new Date(json.scraped_at),
-    source: json.source ? sourceFromJson(json.source) : undefined,
-    categories: json.categories?.map((cat: any) => categoryFromJson(cat)),
-    imageUrl: json.image_url,
-    excerpt: json.excerpt,
-    author: json.author,
-  };
+export interface ArticlesResponse {
+  content: Article[];
+  totalElements: number;
+  totalPages: number;
+  pageNumber: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
-export function articleToJson(article: Article): any {
-  return {
-    id: article.id,
-    title: article.title,
-    content: article.content,
-    url: article.url,
-    source_id: article.sourceId,
-    published_at: article.publishedAt.toISOString(),
-    scraped_at: article.scrapedAt.toISOString(),
-    source: article.source,
-    categories: article.categories,
-    image_url: article.imageUrl,
-    excerpt: article.excerpt,
-    author: article.author,
-  };
-}
-
-export function getTimeAgo(date: Date): string {
+export function getTimeAgo(dateString: string): string {
+  const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
