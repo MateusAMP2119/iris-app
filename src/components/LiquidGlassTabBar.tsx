@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, LayoutChangeEvent } from 'react-native';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, spacing, sizes } from '../constants/theme';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors, sizes, spacing } from '../constants/theme';
 import { useTabBarVisibility } from '../contexts';
 
 // Configuration constants
@@ -17,9 +16,7 @@ interface TabMeasurement {
 }
 
 export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const insets = useSafeAreaInsets();
   const { isVisible } = useTabBarVisibility();
-  const paddingBottom = Math.max(insets.bottom, spacing.sm);
   
   // Animation for hiding/showing tab bar
   const translateY = useRef(new Animated.Value(0)).current;
@@ -93,7 +90,6 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
       <LiquidGlassView
         style={[
           styles.glassContainer,
-          { paddingBottom },
           // Fallback for devices that don't support liquid glass (iOS < 26).
           // On supported devices, LiquidGlassView renders with the native glass effect.
           !isLiquidGlassSupported && styles.fallbackBackground,
