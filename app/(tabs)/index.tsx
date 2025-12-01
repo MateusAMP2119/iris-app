@@ -1,22 +1,22 @@
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React, { useCallback } from 'react';
 import {
+  Dimensions,
   FlatList,
   Pressable,
   RefreshControl,
   StyleSheet,
   Text,
   View,
-  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
-import { NewsCard, SectionHeader, LoadingIndicator, EmptyState } from '../../src/components';
+import { Article, getTimeAgo } from '../../models';
+import { EmptyState, LoadingIndicator, NewsCard, SectionHeader } from '../../src/components';
+import { colors, layout, spacing, typography } from '../../src/constants/theme';
 import { useSavedArticles } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
-import { colors, spacing, layout, typography } from '../../src/constants/theme';
-import { getTimeAgo, Article } from '../../models';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -69,7 +69,7 @@ export default function TodayScreen() {
 
       {/* Featured/Hero Article */}
       {featuredArticle && (
-        <View style={styles.heroSection}>
+        <View>
           <NewsCard
             imageUrl={featuredArticle.imgUrl}
             source={featuredArticle.source?.sourceName ?? null}
@@ -85,7 +85,7 @@ export default function TodayScreen() {
 
       {/* Top Stories Section Header */}
       {topStories.length > 0 && (
-        <SectionHeader title="Top Stories" />
+        <SectionHeader title="Top Stories" showChevron />
       )}
     </View>
   );
@@ -181,9 +181,6 @@ const styles = StyleSheet.create({
     fontSize: typography.display.fontSize,
     fontWeight: typography.display.fontWeight,
     color: colors.primary.text,
-  },
-  heroSection: {
-    marginBottom: spacing.md,
   },
   columnWrapper: {
     justifyContent: 'space-between',

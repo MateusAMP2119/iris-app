@@ -1,19 +1,19 @@
+import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import React from 'react';
 import {
+  Dimensions,
   Pressable,
   StyleSheet,
   Text,
   View,
-  Dimensions,
 } from 'react-native';
-import { Image } from 'expo-image';
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, borderRadius, shadows, animations } from '../constants/theme';
+import { animations, borderRadius, colors, shadows, spacing, typography } from '../constants/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -159,10 +159,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: borderRadius.md,
     borderTopRightRadius: borderRadius.md,
     overflow: 'hidden',
+    padding: spacing.md,
+    paddingBottom: 0,
   },
   image: {
     width: '100%',
     backgroundColor: colors.secondary.gray100,
+    borderRadius: borderRadius.md,
   },
   imagePlaceholder: {
     width: '100%',

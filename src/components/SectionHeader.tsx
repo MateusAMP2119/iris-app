@@ -1,7 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing } from '../constants/theme';
+import { colors, spacing, typography } from '../constants/theme';
 
 interface SectionHeaderProps {
   title: string;
@@ -16,14 +16,17 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   const content = (
     <>
-      <Text style={styles.title}>{title}</Text>
-      {(showChevron || onViewMore) && (
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color={colors.secondary.gray600}
-        />
-      )}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {(showChevron || onViewMore) && (
+          <Ionicons
+            name="chevron-forward"
+            size={28}
+            color={colors.primary.text}
+            style={styles.chevron}
+          />
+        )}
+      </View>
     </>
   );
 
@@ -46,10 +49,18 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   title: {
     fontSize: typography.titleLarge.fontSize,
     fontWeight: typography.titleLarge.fontWeight,
     color: colors.primary.text,
+  },
+  chevron: {
+    marginLeft: 2,
   },
 });
 
