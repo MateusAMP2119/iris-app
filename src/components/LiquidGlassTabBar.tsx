@@ -15,6 +15,8 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
         style={[
           styles.glassContainer,
           { paddingBottom },
+          // Fallback for devices that don't support liquid glass (iOS < 26).
+          // On supported devices, LiquidGlassView renders with the native glass effect.
           !isLiquidGlassSupported && styles.fallbackBackground,
         ]}
         effect="regular"
@@ -97,8 +99,10 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingTop: spacing.sm,
   },
+  // Fallback background for devices that don't support liquid glass.
+  // Uses the card background color with 85% opacity to mimic the glass effect.
   fallbackBackground: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: `${colors.semantic.cardBackground}D9`, // D9 is hex for ~85% opacity
   },
   tabContainer: {
     flexDirection: 'row',
