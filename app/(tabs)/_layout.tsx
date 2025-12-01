@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform } from 'react-native';
 import { colors, sizes, spacing } from '../../src/constants/theme';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
@@ -9,19 +9,15 @@ type IoniconsName = keyof typeof Ionicons.glyphMap;
 interface TabBarIconProps {
   name: IoniconsName;
   color: string;
-  focused: boolean;
 }
 
-function TabBarIcon({ name, color, focused }: TabBarIconProps) {
+function TabBarIcon({ name, color }: TabBarIconProps) {
   return (
-    <View style={styles.iconContainer}>
-      <Ionicons
-        name={name}
-        size={sizes.tabBarIconSize}
-        color={color}
-      />
-      {focused && <View style={styles.activeIndicator} />}
-    </View>
+    <Ionicons
+      name={name}
+      size={sizes.tabBarIconSize}
+      color={color}
+    />
   );
 }
 
@@ -33,7 +29,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.accent.primary,
         tabBarInactiveTintColor: colors.secondary.gray400,
         tabBarStyle: {
-          backgroundColor: colors.primary.background,
+          backgroundColor: colors.semantic.navBackground,
           borderTopColor: colors.semantic.divider,
           borderTopWidth: 1,
           height: Platform.OS === 'ios' ? sizes.bottomNavHeight : 70,
@@ -41,8 +37,11 @@ export default function TabLayout() {
           paddingBottom: Platform.OS === 'ios' ? spacing.lg : spacing.md,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+          fontSize: 11,
+          fontWeight: '400',
+        },
+        tabBarItemStyle: {
+          paddingTop: spacing.xs,
         },
       }}
     >
@@ -54,9 +53,12 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? 'today' : 'today-outline'}
               color={color}
-              focused={focused}
             />
           ),
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: '600',
+          },
         }}
       />
       <Tabs.Screen
@@ -67,7 +69,6 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? 'person' : 'person-outline'}
               color={color}
-              focused={focused}
             />
           ),
         }}
@@ -80,7 +81,6 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? 'bookmark' : 'bookmark-outline'}
               color={color}
-              focused={focused}
             />
           ),
         }}
@@ -93,7 +93,6 @@ export default function TabLayout() {
             <TabBarIcon
               name={focused ? 'search' : 'search-outline'}
               color={color}
-              focused={focused}
             />
           ),
         }}
@@ -101,18 +100,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  activeIndicator: {
-    position: 'absolute',
-    bottom: -4,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.accent.primary,
-  },
-});

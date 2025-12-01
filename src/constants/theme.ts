@@ -6,14 +6,15 @@
 export const colors = {
   // Primary colors
   primary: {
-    background: '#FFFFFF',
+    background: '#F5F5F7', // Off-white screen background
     text: '#000000',
   },
   // Secondary grays
   secondary: {
-    gray100: '#F5F5F5',
+    gray100: '#F5F5F7',
     gray200: '#E5E5E5',
-    gray400: '#999999',
+    gray300: '#D1D1D6', // Inactive bookmark color
+    gray400: '#8E8E93', // Inactive tab color
     gray600: '#666666',
   },
   // Accent color
@@ -22,9 +23,11 @@ export const colors = {
   },
   // Semantic colors
   semantic: {
-    cardBackground: '#FFFFFF',
+    cardBackground: '#FFFFFF', // White cards for depth
+    screenBackground: '#F5F5F7', // Off-white background
+    navBackground: '#FFFFFF', // White navigation bar
     divider: 'rgba(0,0,0,0.1)',
-    shadow: 'rgba(0,0,0,0.08)',
+    shadow: 'rgba(0,0,0,0.1)',
   },
 };
 
@@ -100,9 +103,19 @@ export const shadows = {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
+  },
+  cardPressed: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   elevated: {
     shadowColor: '#000',

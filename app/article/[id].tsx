@@ -228,7 +228,7 @@ export default function ArticleDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.background,
+    backgroundColor: colors.semantic.cardBackground,
   },
   header: {
     flexDirection: 'row',

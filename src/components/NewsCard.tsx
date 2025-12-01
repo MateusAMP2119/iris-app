@@ -79,6 +79,7 @@ export function NewsCard({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
+      {/* Image Section */}
       <View style={styles.imageContainer}>
         {imageUrl ? (
           <Image
@@ -86,7 +87,7 @@ export function NewsCard({
             style={[styles.image, { height: imageHeight }]}
             contentFit="cover"
             transition={200}
-            placeholder={colors.secondary.gray200}
+            placeholder={colors.secondary.gray100}
           />
         ) : (
           <View
@@ -102,34 +103,17 @@ export function NewsCard({
             />
           </View>
         )}
-
-        {/* Source Badge */}
-        {source && (
-          <View style={styles.sourceBadge}>
-            <Text style={styles.sourceText} numberOfLines={1}>
-              {source}
-            </Text>
-          </View>
-        )}
-
-        {/* Bookmark Button */}
-        <Pressable
-          style={styles.bookmarkButton}
-          onPress={(e) => {
-            e.stopPropagation();
-            onBookmark();
-          }}
-          hitSlop={8}
-        >
-          <Ionicons
-            name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-            size={22}
-            color={isBookmarked ? colors.accent.primary : colors.primary.background}
-          />
-        </Pressable>
       </View>
 
+      {/* Content Section */}
       <View style={styles.content}>
+        {/* Source Label - Below image */}
+        {source && (
+          <Text style={styles.sourceText} numberOfLines={1}>
+            {source}
+          </Text>
+        )}
+        
         <Text
           style={[
             styles.headline,
@@ -139,7 +123,26 @@ export function NewsCard({
         >
           {headline}
         </Text>
-        <Text style={styles.date}>{date}</Text>
+        
+        <View style={styles.footer}>
+          <Text style={styles.date}>{date}</Text>
+          
+          {/* Bookmark Button - Bottom right */}
+          <Pressable
+            style={styles.bookmarkButton}
+            onPress={(e) => {
+              e.stopPropagation();
+              onBookmark();
+            }}
+            hitSlop={8}
+          >
+            <Ionicons
+              name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
+              size={22}
+              color={isBookmarked ? colors.accent.primary : colors.secondary.gray300}
+            />
+          </Pressable>
+        </View>
       </View>
     </AnimatedPressable>
   );
@@ -157,42 +160,22 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    backgroundColor: colors.secondary.gray200,
+    backgroundColor: colors.secondary.gray100,
   },
   imagePlaceholder: {
     width: '100%',
-    backgroundColor: colors.secondary.gray200,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sourceBadge: {
-    position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-    maxWidth: '60%',
-  },
-  sourceText: {
-    color: colors.primary.background,
-    fontSize: typography.caption.fontSize,
-    fontWeight: '600',
-  },
-  bookmarkButton: {
-    position: 'absolute',
-    top: spacing.sm,
-    right: spacing.sm,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: colors.secondary.gray100,
     justifyContent: 'center',
     alignItems: 'center',
   },
   content: {
     padding: spacing.md,
+  },
+  sourceText: {
+    fontSize: typography.caption.fontSize,
+    fontWeight: '600',
+    color: colors.primary.text,
+    marginBottom: spacing.sm,
   },
   headline: {
     fontSize: typography.title.fontSize,
@@ -205,9 +188,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 21,
   },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   date: {
     fontSize: typography.caption.fontSize,
     color: typography.caption.color,
+  },
+  bookmarkButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: -spacing.sm,
+    marginBottom: -spacing.sm,
   },
 });
 

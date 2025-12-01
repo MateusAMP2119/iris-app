@@ -138,7 +138,7 @@ export default function ForYouScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.background,
+    backgroundColor: colors.semantic.screenBackground,
   },
   listContent: {
     paddingHorizontal: layout.screenPaddingHorizontal,
