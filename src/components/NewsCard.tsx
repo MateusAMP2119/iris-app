@@ -153,10 +153,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.semantic.cardBackground,
     borderRadius: borderRadius.md,
     ...shadows.card,
-    overflow: 'hidden',
   },
   imageContainer: {
     position: 'relative',
+    borderTopLeftRadius: borderRadius.md,
+    borderTopRightRadius: borderRadius.md,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
