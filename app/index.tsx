@@ -1,233 +1,112 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
-  Platform,
+  ActivityIndicator,
+  FlatList,
+  Image,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import {
-  ArticleModal,
-  HeroArticleCard,
-  LiquidGlassFAB,
-  NewspaperColumn,
-  NewspaperCompactCard,
-} from '../components';
-import { Article, Category } from '../models';
-import MockDataService from '../services/MockDataService';
-import { AppColors, AppSpacing, AppTextStyles } from '../theme';
+import { Article, getTimeAgo } from '../models';
+import { fetchArticles } from '../services/api';
 
-const { width } = Dimensions.get('window');
-const isMobile = width < 768;
-const pageMargin = isMobile ? AppSpacing.md : AppSpacing.xl;
+function ArticleCard({ article }: { article: Article }) {
+  const [imageError, setImageError] = useState(false);
+  const authorNames = article.authors
+    .map((a) => `${a.firstName} ${a.lastName}`)
+    .join(', ');
 
-function HomeScreen() {
-  const [articles, setArticles] = useState<Article[]>(
-    MockDataService.getRecentArticles()
-  );
-  const [categories] = useState<Category[]>(MockDataService.categories);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
-  const [isFabMenuExpanded, setIsFabMenuExpanded] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  const [isArticleModalVisible, setIsArticleModalVisible] = useState(false);
-
-  const handleCategorySelect = (category: Category | null) => {
-    setSelectedCategory(category);
-    if (category) {
-      setArticles(MockDataService.getArticlesByCategory(category.id));
-    } else {
-      setArticles(MockDataService.getRecentArticles());
-    }
-  };
-
-  const navigateToArticle = (article: Article) => {
-    setSelectedArticle(article);
-    setIsArticleModalVisible(true);
-  };
-
-  const closeArticleModal = () => {
-    setIsArticleModalVisible(false);
-    setTimeout(() => setSelectedArticle(null), 300); // Clear after animation
-  };
-
-  const showFilterBottomSheet = () => {
-    // TODO: Implement filter bottom sheet
-    alert('Filter options coming soon');
-  };
-
-  const handleSearch = () => {
-    // TODO: Implement search
-    alert('Search functionality coming soon');
-  };
-
-  const renderNewspaperLayout = () => {
-    const remainingArticles = articles.slice(1);
-
-    if (isMobile) {
-      // Mobile: Single column with compact layout
-      return remainingArticles.map((article, index) => (
-        <NewspaperCompactCard
-          key={article.id}
-          article={article}
-          onTap={() => navigateToArticle(article)}
-          index={index}
+  return (
+    <Pressable style={styles.card}>
+      {article.imgUrl && !imageError && (
+        <Image
+          source={{ uri: article.imgUrl }}
+          style={styles.cardImage}
+          resizeMode="cover"
+          onError={() => setImageError(true)}
         />
-      ));
-    } else {
-      // Desktop/Tablet: Multi-column newspaper layout
-      const columns = 3;
-      const articlesPerColumn = Math.ceil(remainingArticles.length / columns);
-
-      return (
-        <View style={styles.columnsContainer}>
-          {[0, 1, 2].map((columnIndex) => {
-            const startIndex = columnIndex * articlesPerColumn;
-            const endIndex = Math.min(
-              startIndex + articlesPerColumn,
-              remainingArticles.length
-            );
-
-            if (startIndex >= remainingArticles.length) {
-              return <View key={columnIndex} style={{ flex: 1 }} />;
-            }
-
-            const columnArticles = remainingArticles.slice(
-              startIndex,
-              endIndex
-            );
-
-            const columnTitle =
-              columnIndex === 0
-                ? 'NATIONAL'
-                : columnIndex === 1
-                ? 'INTERNATIONAL'
-                : 'BUSINESS';
-
-            return (
-              <NewspaperColumn
-                key={columnIndex}
-                articles={columnArticles}
-                onArticleTap={navigateToArticle}
-                title={columnTitle}
-              />
-            );
-          })}
+      )}
+      <View style={styles.cardContent}>
+        <View style={styles.categoriesRow}>
+          {article.categories.map((cat) => (
+            <View key={cat.categoryId} style={styles.categoryChip}>
+              <Text style={styles.categoryText}>{cat.categoryName}</Text>
+            </View>
+          ))}
         </View>
-      );
+        <Text style={styles.title}>{article.title}</Text>
+        {article.subtitle && (
+          <Text style={styles.subtitle} numberOfLines={2}>
+            {article.subtitle}
+          </Text>
+        )}
+        <View style={styles.metaRow}>
+          {article.source && (
+            <Text style={styles.sourceName}>{article.source.sourceName}</Text>
+          )}
+          {authorNames && <Text style={styles.author}>{authorNames}</Text>}
+          <Text style={styles.time}>{getTimeAgo(article.publicationDate)}</Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+export default function HomeScreen() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  const loadArticles = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetchArticles(0, 10);
+      setArticles(response.content);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load articles');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const today = new Date();
-  const dateString = today.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>{error}</Text>
+        <Pressable style={styles.retryButton} onPress={loadArticles}>
+          <Text style={styles.retryText}>Retry</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView 
-        style={styles.scrollView} 
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Masthead - Compact Newspaper Header */}
-        <View style={styles.masthead}>
-          <View style={styles.mastheadRow}>
-            <Text style={styles.mastheadTitle}>IRIS</Text>
-            <View style={styles.mastheadDivider} />
-            <Text style={styles.dateText}>{dateString.toUpperCase()}</Text>
-          </View>
-        </View>
-
-        {/* Category Navigation Bar */}
-        <View style={styles.navBar}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.navContent}
-          >
-            <Pressable
-              onPress={() => handleCategorySelect(null)}
-              style={styles.navItem}
-            >
-              <Text
-                style={[
-                  styles.navText,
-                  selectedCategory === null && styles.navTextActive,
-                ]}
-              >
-                ALL NEWS
-              </Text>
-            </Pressable>
-            {categories.map((category) => (
-              <Pressable
-                key={category.id}
-                onPress={() => handleCategorySelect(category)}
-                style={styles.navItem}
-              >
-                <Text
-                  style={[
-                    styles.navText,
-                    selectedCategory?.id === category.id && styles.navTextActive,
-                  ]}
-                >
-                  {category.name.toUpperCase()}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Hero Article - Above the Fold */}
-        {articles.length > 0 && (
-          <View style={styles.heroSection}>
-            <HeroArticleCard
-              article={articles[0]}
-              onTap={() => navigateToArticle(articles[0])}
-            />
-            {articles.length > 1 && (
-              <View style={styles.heroDivider}>
-                <Text style={styles.heroDividerText}>
-                  {selectedCategory 
-                    ? `${selectedCategory.name.toUpperCase()} • LATEST UPDATES` 
-                    : `TRENDING NOW • ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase()}`
-                  }
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        {/* Articles Grid - Newspaper Columns */}
-        {articles.length > 1 && (
-          <View style={styles.articlesSection}>{renderNewspaperLayout()}</View>
-        )}
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
-
-      {/* Liquid Glass FAB */}
-      <View style={styles.fabContainer}>
-        <LiquidGlassFAB
-          isExpanded={isFabMenuExpanded}
-          onToggle={() => setIsFabMenuExpanded(!isFabMenuExpanded)}
-          onSearchTap={handleSearch}
-          onFilterTap={showFilterBottomSheet}
-        />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>IRIS</Text>
       </View>
-
-      {/* Article Modal */}
-      <ArticleModal
-        article={selectedArticle}
-        visible={isArticleModalVisible}
-        onClose={closeArticleModal}
+      <FlatList
+        data={articles}
+        keyExtractor={(item) => item.articleId.toString()}
+        renderItem={({ item }) => <ArticleCard article={item} />}
+        contentContainerStyle={styles.list}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>
   );
@@ -236,113 +115,116 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.background,
+    backgroundColor: '#fff',
   },
-  scrollView: {
+  centered: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
   },
-  
-  // ========== MASTHEAD ==========
-  masthead: {
-    paddingHorizontal: pageMargin,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: AppSpacing.sm,
-    borderBottomWidth: 3,
-    borderBottomColor: AppColors.primaryText,
+  header: {
+    paddingTop: 60,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: '#000',
+    backgroundColor: '#fff',
   },
-  mastheadRow: {
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: 4,
+    color: '#000',
+  },
+  list: {
+    padding: 16,
+  },
+  card: {
+    backgroundColor: '#fff',
+  },
+  cardImage: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: '#f0f0f0',
+  },
+  cardContent: {
+    paddingVertical: 12,
+  },
+  categoriesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  categoryChip: {
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#666',
+    textTransform: 'uppercase',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+    lineHeight: 24,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#444',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  mastheadTitle: {
-    ...AppTextStyles.headlinePrimary,
-    color: AppColors.primaryText,
-    fontWeight: '900',
-    letterSpacing: 8,
-    fontSize: isMobile ? 28 : 36,
-  },
-  mastheadDivider: {
-    flex: 1,
-    height: 2,
-    backgroundColor: AppColors.primaryText,
-    marginHorizontal: AppSpacing.md,
-  },
-  dateText: {
-    ...AppTextStyles.caption,
-    color: AppColors.primaryText,
+  sourceName: {
+    fontSize: 12,
+    color: '#000',
     fontWeight: '700',
-    letterSpacing: 1.5,
-    fontSize: 8,
   },
-
-  // ========== NAVIGATION BAR ==========
-  navBar: {
-    borderBottomWidth: 3,
-    borderBottomColor: AppColors.primaryText,
-    backgroundColor: AppColors.primaryText,
+  author: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
   },
-  navContent: {
-    paddingHorizontal: pageMargin,
-    flexDirection: 'row',
-    gap: 0,
+  time: {
+    fontSize: 12,
+    color: '#999',
   },
-  navItem: {
-    paddingHorizontal: AppSpacing.md,
-    paddingVertical: AppSpacing.sm,
-    borderRightWidth: 1,
-    borderRightColor: AppColors.surface,
+  separator: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginVertical: 8,
   },
-  navText: {
-    ...AppTextStyles.labelSmall,
-    color: AppColors.surface,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    fontSize: 11,
+  errorText: {
+    fontSize: 16,
+    color: '#c00',
+    textAlign: 'center',
+    marginBottom: 16,
   },
-  navTextActive: {
-    color: AppColors.surface,
-    textDecorationLine: 'underline',
+  retryButton: {
+    backgroundColor: '#000',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 4,
   },
-
-  // ========== HERO SECTION ==========
-  heroSection: {
-    paddingHorizontal: pageMargin,
-    paddingTop: AppSpacing.xl,
-  },
-  heroDivider: {
-    backgroundColor: AppColors.primaryText,
-    paddingHorizontal: AppSpacing.md,
-    paddingVertical: AppSpacing.sm,
-    marginTop: AppSpacing.lg,
-    marginLeft: -pageMargin,
-    marginRight: -pageMargin,
-    paddingLeft: pageMargin,
-    paddingRight: isMobile ? 100 : 120, // Leave space for FAB
-  },
-  heroDividerText: {
-    ...AppTextStyles.labelSmall,
-    color: AppColors.surface,
-    fontWeight: '900',
-    letterSpacing: 2,
-    fontSize: 11,
-  },
-
-  // ========== ARTICLES SECTION ==========
-  articlesSection: {
-    paddingTop: AppSpacing.lg,
-    paddingHorizontal: isMobile ? pageMargin : 0,
-  },
-  columnsContainer: {
-    flexDirection: 'row',
-  },
-
-  // ========== FAB ==========
-  fabContainer: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
+  retryText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
-
-export default HomeScreen;
