@@ -1,15 +1,23 @@
 import { Stack } from "expo-router";
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SavedArticlesProvider, FollowingProvider } from '../src/contexts';
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SavedArticlesProvider>
+          <FollowingProvider>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            />
+          </FollowingProvider>
+        </SavedArticlesProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

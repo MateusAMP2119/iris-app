@@ -1,9 +1,9 @@
 {
   "designSystem": {
     "name": "News Aggregator App Design System",
-    "version": "1.0",
+    "version": "1.1",
     "overview": {
-      "designPhilosophy": "Minimalist, content-focused design that respects user time with clean typography, generous whitespace, and clear information hierarchy",
+      "designPhilosophy": "Minimalist, content-focused design that respects user time with clean typography, generous whitespace, and clear information hierarchy with subtle depth through shadows and background contrast",
       "targetPlatform": "iOS mobile application",
       "primaryPurpose": "Curated news consumption with read-later functionality"
     },
@@ -44,25 +44,28 @@
     },
     "colorPalette": {
       "primary": {
-        "background": "#FFFFFF",
+        "background": "#F5F5F7",
+        "cardBackground": "#FFFFFF",
         "text": "#000000",
-        "description": "Pure black on white for maximum readability"
+        "description": "Off-white background (#F5F5F7) with pure white cards for depth separation"
       },
       "secondary": {
-        "gray100": "#F5F5F5",
+        "gray100": "#F5F5F7",
         "gray200": "#E5E5E5",
+        "gray300": "#D1D1D6",
         "gray400": "#999999",
         "gray600": "#666666",
         "description": "Subtle grays for backgrounds and dividers"
       },
       "accent": {
         "primary": "#FF2D55",
-        "description": "Bright pink/red for active states, bookmarks, and CTAs"
+        "description": "Bright pink/red for active states, bookmarks, and bottom navigation active tab"
       },
       "semantic": {
+        "screenBackground": "#F5F5F7",
         "cardBackground": "#FFFFFF",
         "divider": "rgba(0,0,0,0.1)",
-        "shadow": "rgba(0,0,0,0.08)"
+        "shadow": "rgba(0,0,0,0.1)"
       }
     },
     "spacing": {
@@ -77,53 +80,141 @@
       },
       "application": {
         "screenPadding": "16-20px horizontal",
-        "cardPadding": "16-20px all sides",
+        "cardPadding": "16px all sides for text content",
         "elementSpacing": "12-16px between related items",
-        "sectionSpacing": "32-48px between major sections"
+        "sectionSpacing": "32-48px between major sections",
+        "cardMargin": "12-16px between cards"
+      }
+    },
+    "shadows": {
+      "card": {
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "width": 0,
+          "height": 2
+        },
+        "shadowOpacity": 0.1,
+        "shadowRadius": 8,
+        "elevation": 3,
+        "description": "Subtle shadow for card depth: 0px 2px 8px rgba(0,0,0,0.1)"
+      },
+      "cardPressed": {
+        "shadowColor": "#000000",
+        "shadowOffset": {
+          "width": 0,
+          "height": 1
+        },
+        "shadowOpacity": 0.05,
+        "shadowRadius": 4,
+        "elevation": 1,
+        "description": "Reduced shadow on press for feedback"
       }
     },
     "layout": {
       "grid": {
-        "type": "Flexible single column with cards",
+        "type": "Flexible single column with cards on off-white background",
         "columns": 1,
         "gutters": "16-20px",
-        "maxWidth": "100% of screen minus padding"
+        "maxWidth": "100% of screen minus padding",
+        "backgroundColor": "#F5F5F7"
       },
       "principles": [
         "Single column for mobile-first approach",
-        "Card-based content organization",
+        "Card-based content organization with white cards on off-white background",
         "Generous whitespace between sections",
-        "Clear visual hierarchy through size and spacing"
+        "Clear visual hierarchy through size, spacing, and shadows",
+        "Subtle depth through background contrast"
       ]
     },
     "components": {
       "navigationBar": {
-        "position": "Bottom of screen",
-        "height": "80-90px including safe area",
-        "style": "Transparent background with icons",
+        "position": "Bottom of screen, fixed",
+        "height": "83-90px including safe area",
+        "style": "White background with subtle top border/shadow",
+        "backgroundColor": "#FFFFFF",
+        "borderTop": "1px solid rgba(0,0,0,0.1)",
         "items": [
           {
-            "type": "Icon button",
-            "iconStyle": "Line icons or filled when active",
+            "type": "Icon + Label combination",
+            "layout": "Vertical - icon above label",
+            "iconStyle": "Line icons (inactive), filled icons (active)",
+            "iconSize": "24-28px",
+            "labelSize": "10-11px",
             "labels": ["Today", "For You", "For Later", "Search"],
-            "activeState": "Accent color fill with label"
+            "activeState": {
+              "iconColor": "#FF2D55 (accent)",
+              "labelColor": "#FF2D55 (accent)",
+              "iconStyle": "Filled",
+              "labelWeight": "600 (Semibold)"
+            },
+            "inactiveState": {
+              "iconColor": "#8E8E93 (gray)",
+              "labelColor": "#8E8E93 (gray)",
+              "iconStyle": "Outline/Line",
+              "labelWeight": "400 (Regular)"
+            }
           }
-        ]
+        ],
+        "spacing": "Evenly distributed across width with equal gaps",
+        "safeArea": "Includes bottom safe area padding for home indicator"
       },
       "card": {
         "variants": {
           "newsCard": {
             "structure": [
-              "Featured image (16:9 or 4:3 aspect ratio)",
-              "Source logo/name (small, top left)",
-              "Headline (bold, 2-3 lines max)",
-              "Date/timestamp (small, gray)",
-              "Bookmark icon (top right, optional)"
+              "Featured image (16:9 or similar aspect ratio, full width)",
+              "Content section with padding:",
+              "  - Source name/logo (small text or badge)",
+              "  - Headline (bold, 2-3 lines max)",
+              "  - Date/timestamp (small, gray)",
+              "  - Bookmark icon (bottom right corner of card)"
             ],
             "background": "#FFFFFF",
             "borderRadius": "12-16px",
-            "shadow": "0 2px 8px rgba(0,0,0,0.08)",
-            "padding": "0 (image full bleed) + 16px for text content",
+            "shadow": {
+              "shadowColor": "#000000",
+              "shadowOffset": "0px 2px",
+              "shadowOpacity": 0.1,
+              "shadowRadius": "8px",
+              "elevation": 3
+            },
+            "imageSection": {
+              "aspectRatio": "16:9 or 4:3",
+              "borderRadius": "12-16px 12-16px 0 0",
+              "width": "100%"
+            },
+            "contentSection": {
+              "padding": "16px",
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": "0 0 12-16px 12-16px"
+            },
+            "sourceLabel": {
+              "position": "Below image, inside content section",
+              "marginBottom": "8px",
+              "fontSize": "13-14px",
+              "fontWeight": "600",
+              "color": "#000000"
+            },
+            "headline": {
+              "fontSize": "17-20px",
+              "fontWeight": "600-700",
+              "lineHeight": "1.3",
+              "maxLines": 3,
+              "marginBottom": "8px",
+              "color": "#000000"
+            },
+            "date": {
+              "fontSize": "13px",
+              "fontWeight": "400",
+              "color": "rgba(0,0,0,0.5)"
+            },
+            "bookmarkIcon": {
+              "position": "Absolute, bottom right corner",
+              "right": "16px",
+              "bottom": "16px",
+              "size": "20-24px",
+              "color": "#FF2D55 (when active) or #D1D1D6 (when inactive)"
+            },
             "margin": "12-16px between cards"
           },
           "readLaterCard": {
@@ -136,14 +227,39 @@
             "layout": "Horizontal with thumbnail on right",
             "background": "#FFFFFF",
             "borderRadius": "12px",
+            "shadow": {
+              "shadowColor": "#000000",
+              "shadowOffset": "0px 2px",
+              "shadowOpacity": 0.1,
+              "shadowRadius": "6px",
+              "elevation": 2
+            },
             "padding": "16px",
-            "imageSize": "80x80px approximately"
+            "imageSize": "80x80px approximately",
+            "imagePosition": "Absolute right, vertically centered"
+          },
+          "topStoriesCard": {
+            "structure": "Compact version of newsCard for grid layout",
+            "layout": "Used in 2-column grid",
+            "background": "#FFFFFF",
+            "borderRadius": "12px",
+            "shadow": {
+              "shadowColor": "#000000",
+              "shadowOffset": "0px 2px",
+              "shadowOpacity": 0.1,
+              "shadowRadius": "8px",
+              "elevation": 3
+            },
+            "imageAspectRatio": "4:3 or 1:1",
+            "contentPadding": "12px",
+            "sourceLabel": "Below image in content section",
+            "bookmarkIcon": "Bottom right corner of card"
           }
         },
         "interactions": {
-          "tap": "Navigate to article",
+          "tap": "Navigate to article with scale animation",
           "longPress": "Context menu for share/save",
-          "swipe": "Reveal actions (optional)"
+          "bookmark": "Toggle save state with animation"
         }
       },
       "headerSection": {
@@ -153,32 +269,61 @@
           "Generous top padding (24-32px)"
         ],
         "alignment": "Left",
-        "background": "Transparent or subtle gray"
+        "background": "Transparent (shows screen background #F5F5F7)"
       },
       "sectionHeader": {
         "structure": [
           "Section title (20-24px, bold)",
-          "Optional chevron or 'view more' indicator"
+          "Optional chevron right indicator (→)"
         ],
-        "spacing": "24px top margin, 16px bottom margin"
+        "spacing": "24px top margin, 16px bottom margin",
+        "chevron": {
+          "size": "16-18px",
+          "color": "#8E8E93",
+          "position": "Right aligned, vertically centered with title"
+        }
       },
       "imageContainer": {
         "aspectRatios": ["16:9", "4:3", "1:1"],
-        "borderRadius": "12px (for cards) or 0 (for full bleed)",
+        "borderRadius": "12-16px (top corners only for cards) or 12-16px (all corners for standalone)",
         "objectFit": "cover",
-        "loading": "Lazy load with placeholder"
+        "loading": "Lazy load with gray placeholder (#F5F5F7)",
+        "backgroundColor": "#F5F5F7"
       },
       "iconButton": {
         "size": "44x44px minimum (touch target)",
+        "iconSize": "24-28px",
+        "style": "Line icons (2px stroke) when inactive, filled when active",
+        "activeState": {
+          "iconColor": "#FF2D55",
+          "iconStyle": "Filled"
+        },
+        "inactiveState": {
+          "iconColor": "#8E8E93",
+          "iconStyle": "Outline"
+        }
+      },
+      "bookmarkButton": {
+        "size": "44x44px touch target",
         "iconSize": "20-24px",
-        "style": "Line icons, 2px stroke",
-        "activeState": "Filled with accent color"
+        "position": "Bottom right corner of card",
+        "activeState": {
+          "icon": "Filled bookmark",
+          "color": "#FF2D55"
+        },
+        "inactiveState": {
+          "icon": "Outline bookmark",
+          "color": "#D1D1D6"
+        },
+        "animation": "Scale bounce on toggle"
       },
       "sourceLabel": {
-        "structure": "Logo + text or badge",
-        "size": "Small (24-32px height)",
-        "position": "Top left of card or inline with headline",
-        "style": "High contrast with background"
+        "structure": "Logo + text or text only",
+        "size": "13-14px font",
+        "fontWeight": "600 (Semibold)",
+        "position": "Below image, at top of content section",
+        "color": "#000000",
+        "marginBottom": "8px"
       },
       "followingList": {
         "structure": [
@@ -188,41 +333,48 @@
         ],
         "avatarSize": "56-64px diameter",
         "spacing": "12-16px between avatars",
-        "background": "#F5F5F5 or white"
+        "background": "#FFFFFF or #F5F5F7"
       }
     },
     "screens": {
       "breakingNews": {
-        "layout": "Hero card + scrollable grid",
+        "backgroundColor": "#F5F5F7",
+        "layout": "Hero card + scrollable grid on off-white background",
         "sections": [
-          "Header (date, title)",
-          "Hero story (large image card)",
-          "Top Stories (2-column grid of cards)",
-          "Bottom navigation"
-        ]
+          "Header (date, title) - no background",
+          "Hero story (large white card with shadow)",
+          "Top Stories section header",
+          "Top Stories (2-column grid of white cards with shadows)",
+          "Bottom navigation (white background)"
+        ],
+        "padding": "16-20px horizontal for content area"
       },
       "readLater": {
-        "layout": "Vertical list of saved articles",
+        "backgroundColor": "#F5F5F7",
+        "layout": "Vertical list of saved articles on off-white background",
         "sections": [
-          "Header (title)",
-          "Scrollable list of horizontal cards",
-          "Bottom navigation"
-        ]
+          "Header (title) - no background",
+          "Scrollable list of horizontal white cards with shadows",
+          "Bottom navigation (white background)"
+        ],
+        "padding": "16-20px horizontal for content area"
       },
       "following": {
+        "backgroundColor": "#F5F5F7",
         "layout": "Source management screen",
         "sections": [
-          "Following sources (circular avatars in grid)",
-          "Menu items (All Following, Discover, History)"
+          "Following sources (circular avatars in grid) - on white container",
+          "Menu items (All Following, Discover, History) - white cards"
         ]
       }
     },
     "interactions": {
       "animations": {
-        "cardTap": "Subtle scale (0.98) on press, spring back",
+        "cardTap": "Scale (0.98) on press with shadow reduction, spring back on release",
         "navigation": "Slide transitions between screens",
         "scrolling": "Smooth, native iOS scroll physics",
-        "loading": "Skeleton screens or subtle fade-in"
+        "loading": "Skeleton screens or subtle fade-in",
+        "bookmark": "Scale bounce (1.0 → 1.2 → 1.0) with color change"
       },
       "gestures": [
         "Tap: Select/open",
@@ -231,20 +383,23 @@
         "Pull to refresh: Update content"
       ],
       "feedback": {
-        "haptic": "Light haptic on button press",
-        "visual": "Accent color highlights for active states",
-        "transition": "Smooth 300-400ms duration"
+        "haptic": "Light haptic on button press and bookmark toggle",
+        "visual": "Accent color (#FF2D55) for active states",
+        "transition": "Smooth 300-400ms duration with easing"
       }
     },
     "visualPrinciples": [
       "Content is king: minimal chrome, maximum content",
       "Generous whitespace for breathing room",
       "High contrast for accessibility and readability",
-      "Consistent card metaphor throughout",
-      "Clear information hierarchy through size and weight",
-      "Single accent color for focus and consistency",
+      "Consistent card metaphor with white cards on off-white background",
+      "Subtle depth through shadows and background contrast",
+      "Clear information hierarchy through size, weight, and spacing",
+      "Single accent color (#FF2D55) for focus and consistency",
       "Photography-forward with quality images",
-      "Bottom navigation for thumb-friendly access",
+      "Bottom navigation with clear active states",
+      "Bookmark actions positioned for easy thumb access (bottom right)",
+      "Source attribution below images, not overlaid",
       "No clutter: every element serves a purpose"
     ],
     "responsiveness": {
@@ -255,16 +410,17 @@
     },
     "accessibility": {
       "contrast": "WCAG AAA for body text (7:1 minimum)",
-      "touchTargets": "44x44px minimum",
+      "touchTargets": "44x44px minimum for all interactive elements",
       "textScaling": "Supports dynamic type",
-      "voiceOver": "Semantic HTML/native elements for screen readers"
+      "voiceOver": "Semantic HTML/native elements for screen readers",
+      "focusIndicators": "Clear focus states for navigation"
     },
     "contentGuidelines": {
       "headlines": "2-3 lines maximum, clear and concise",
       "descriptions": "1-2 sentences when present",
       "dates": "Relative (Today) or absolute (Month DD, YYYY)",
-      "sources": "Always attributed with logo or name",
-      "images": "High quality, relevant to content, proper aspect ratios"
+      "sources": "Always attributed below image in content section",
+      "images": "High quality, relevant to content, proper aspect ratios with consistent treatment"
     }
   }
 }
