@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 
+// Configuration constants for scroll behavior
+const SCROLL_THRESHOLD = 10; // Minimum scroll distance to trigger hide/show
+const INITIAL_SCROLL_OFFSET = 50; // Scroll position before hiding starts
+
 interface TabBarVisibilityContextType {
   isVisible: boolean;
   handleScroll: (event: { nativeEvent: { contentOffset: { y: number } } }) => void;
@@ -14,15 +18,14 @@ interface TabBarVisibilityProviderProps {
 export function TabBarVisibilityProvider({ children }: TabBarVisibilityProviderProps) {
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
 
   const handleScroll = useCallback((event: { nativeEvent: { contentOffset: { y: number } } }) => {
     const currentScrollY = event.nativeEvent.contentOffset.y;
     const scrollDiff = currentScrollY - lastScrollY.current;
 
     // Only update visibility if we've scrolled past the threshold
-    if (Math.abs(scrollDiff) > scrollThreshold) {
-      if (scrollDiff > 0 && currentScrollY > 50) {
+    if (Math.abs(scrollDiff) > SCROLL_THRESHOLD) {
+      if (scrollDiff > 0 && currentScrollY > INITIAL_SCROLL_OFFSET) {
         // Scrolling down and past initial content - hide
         setIsVisible(false);
       } else if (scrollDiff < 0) {

@@ -6,6 +6,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, sizes } from '../constants/theme';
 import { useTabBarVisibility } from '../contexts';
 
+// Configuration constants
+const TAB_BAR_HIDE_OFFSET = 120; // Distance to translate when hiding
+const PILL_WIDTH_RATIO = 0.7; // Pill width as a ratio of tab width
+const PILL_TOP_OFFSET = 4; // Distance from top of tab container
+
 interface TabMeasurement {
   x: number;
   width: number;
@@ -29,7 +34,7 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
 
   useEffect(() => {
     Animated.spring(translateY, {
-      toValue: isVisible ? 0 : 120,
+      toValue: isVisible ? 0 : TAB_BAR_HIDE_OFFSET,
       useNativeDriver: true,
       tension: 60,
       friction: 12,
@@ -39,7 +44,7 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
   useEffect(() => {
     if (isLayoutReady && tabMeasurements[state.index]) {
       const tab = tabMeasurements[state.index];
-      const targetPillWidth = tab.width * 0.7;
+      const targetPillWidth = tab.width * PILL_WIDTH_RATIO;
       const targetPosition = tab.x + (tab.width - targetPillWidth) / 2;
       
       Animated.parallel([
@@ -72,7 +77,7 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
         // Initialize pill position to first tab if not set
         if (!prev.length && newMeasurements[state.index]) {
           const tab = newMeasurements[state.index];
-          const targetPillWidth = tab.width * 0.7;
+          const targetPillWidth = tab.width * PILL_WIDTH_RATIO;
           const targetPosition = tab.x + (tab.width - targetPillWidth) / 2;
           pillPosition.setValue(targetPosition);
           pillWidth.setValue(targetPillWidth);
@@ -208,7 +213,7 @@ const styles = StyleSheet.create({
   },
   pillIndicator: {
     position: 'absolute',
-    top: -spacing.xs,
+    top: -PILL_TOP_OFFSET,
     height: 32,
     borderRadius: 16,
     overflow: 'hidden',
