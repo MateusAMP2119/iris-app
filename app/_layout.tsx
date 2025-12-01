@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SavedArticlesProvider, FollowingProvider } from '../src/contexts';
+import { SavedArticlesProvider, FollowingProvider, TabBarVisibilityProvider } from '../src/contexts';
 
 export default function RootLayout() {
   return (
@@ -10,11 +10,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <SavedArticlesProvider>
           <FollowingProvider>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            />
+            <TabBarVisibilityProvider>
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                }}
+              />
+            </TabBarVisibilityProvider>
           </FollowingProvider>
         </SavedArticlesProvider>
       </SafeAreaProvider>
