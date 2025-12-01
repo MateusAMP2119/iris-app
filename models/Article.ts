@@ -15,6 +15,15 @@ export interface Category {
   createdAt: string;
 }
 
+export interface Source {
+  sourceId: number;
+  sourceName: string;
+  sourceUrl: string;
+  reliabilityRating: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface Article {
   articleId: number;
   title: string;
@@ -28,6 +37,8 @@ export interface Article {
   isFeatured: boolean | null;
   createdAt: string;
   updatedAt: string;
+  imgUrl: string | null;
+  source: Source | null;
 }
 
 export interface ArticlesResponse {

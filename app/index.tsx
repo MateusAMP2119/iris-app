@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -12,12 +13,21 @@ import { Article, getTimeAgo } from '../models';
 import { fetchArticles } from '../services/api';
 
 function ArticleCard({ article }: { article: Article }) {
+  const [imageError, setImageError] = useState(false);
   const authorNames = article.authors
     .map((a) => `${a.firstName} ${a.lastName}`)
     .join(', ');
 
   return (
     <Pressable style={styles.card}>
+      {article.imgUrl && !imageError && (
+        <Image
+          source={{ uri: article.imgUrl }}
+          style={styles.cardImage}
+          resizeMode="cover"
+          onError={() => setImageError(true)}
+        />
+      )}
       <View style={styles.cardContent}>
         <View style={styles.categoriesRow}>
           {article.categories.map((cat) => (
@@ -33,6 +43,9 @@ function ArticleCard({ article }: { article: Article }) {
           </Text>
         )}
         <View style={styles.metaRow}>
+          {article.source && (
+            <Text style={styles.sourceName}>{article.source.sourceName}</Text>
+          )}
           {authorNames && <Text style={styles.author}>{authorNames}</Text>}
           <Text style={styles.time}>{getTimeAgo(article.publicationDate)}</Text>
         </View>
@@ -131,6 +144,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
   },
+  cardImage: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: '#f0f0f0',
+  },
   cardContent: {
     paddingVertical: 12,
   },
@@ -168,7 +188,13 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 8,
+  },
+  sourceName: {
+    fontSize: 12,
+    color: '#000',
+    fontWeight: '700',
   },
   author: {
     fontSize: 12,
