@@ -1,8 +1,9 @@
-import React, { ReactNode, useCallback } from 'react';
-import { StyleSheet } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { runOnJS } from 'react-native-reanimated';
+import React, { ReactNode, useCallback, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector, GestureStateChangeEvent, PanGestureHandlerEventPayload } from 'react-native-gesture-handler';
+import { runOnJS } from 'react-native-reanimated';
 import { useRouter, usePathname } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 
 // Define tab order for navigation
 const TAB_ORDER = ['/(tabs)', '/(tabs)/foryou', '/(tabs)/forlater', '/(tabs)/search'] as const;
@@ -21,8 +22,8 @@ const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
 };
 
 // Swipe configuration
-const SWIPE_THRESHOLD = 50; // Minimum horizontal distance to trigger navigation
-const VELOCITY_THRESHOLD = 500; // Minimum velocity to trigger navigation
+const SWIPE_THRESHOLD = 80; // Minimum horizontal distance to trigger navigation
+const VELOCITY_THRESHOLD = 800; // Minimum velocity to trigger navigation
 
 interface SwipeableTabWrapperProps {
   children: ReactNode;
@@ -31,8 +32,14 @@ interface SwipeableTabWrapperProps {
 export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const isNavigating = useRef(false);
 
   const navigateToTab = useCallback((direction: 'left' | 'right') => {
+    // Prevent multiple navigations
+    if (isNavigating.current) {
+      return;
+    }
+    
     // Find current tab index using the pathname map
     const currentIndex = PATHNAME_TO_TAB_INDEX[pathname];
     
@@ -54,35 +61,58 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
       return;
     }
 
+    // Prevent rapid navigation
+    isNavigating.current = true;
+    setTimeout(() => {
+      isNavigating.current = false;
+    }, 300);
+
+    // Provide haptic feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
     // Navigate to target tab
     router.replace(TAB_ORDER[targetIndex]);
   }, [pathname, router]);
 
-  const panGesture = Gesture.Pan()
-    .activeOffsetX([-20, 20]) // Activate after moving 20px horizontally
-    .failOffsetY([-20, 20]) // Fail if moving more than 20px vertically
-    .onEnd((event) => {
-      const { translationX, velocityX } = event;
-      
-      // Check if swipe meets threshold (either by distance or velocity)
-      const isValidSwipe = 
-        Math.abs(translationX) > SWIPE_THRESHOLD || 
-        Math.abs(velocityX) > VELOCITY_THRESHOLD;
-      
-      if (!isValidSwipe) {
-        return;
-      }
+  const handleGestureEnd = useCallback((event: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
+    const { translationX, translationY, velocityX } = event;
+    
+    // Ensure this is primarily a horizontal swipe (not vertical scrolling)
+    const isHorizontalSwipe = Math.abs(translationX) > Math.abs(translationY) * 1.5;
+    
+    if (!isHorizontalSwipe) {
+      return;
+    }
+    
+    // Check if swipe meets threshold (either by distance or velocity)
+    const isValidSwipe = 
+      Math.abs(translationX) > SWIPE_THRESHOLD || 
+      Math.abs(velocityX) > VELOCITY_THRESHOLD;
+    
+    if (!isValidSwipe) {
+      return;
+    }
 
-      // Determine swipe direction
-      const direction = translationX < 0 ? 'left' : 'right';
-      runOnJS(navigateToTab)(direction);
-    });
+    // Determine swipe direction
+    const direction = translationX < 0 ? 'left' : 'right';
+    navigateToTab(direction);
+  }, [navigateToTab]);
+
+  const panGesture = Gesture.Pan()
+    .onEnd((event) => {
+      runOnJS(handleGestureEnd)(event);
+    })
+    .minDistance(10)
+    .minPointers(1)
+    .maxPointers(1)
+    .activeOffsetX([-25, 25])
+    .failOffsetY([-15, 15]);
 
   return (
     <GestureDetector gesture={panGesture}>
-      <Animated.View style={styles.container}>
+      <View style={styles.container}>
         {children}
-      </Animated.View>
+      </View>
     </GestureDetector>
   );
 }
