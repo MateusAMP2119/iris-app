@@ -5,20 +5,21 @@ import { runOnJS } from 'react-native-reanimated';
 import { useRouter, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
-// Define tab order for navigation
-const TAB_ORDER = ['/(tabs)', '/(tabs)/foryou', '/(tabs)/forlater', '/(tabs)/search'] as const;
+// Define tab order for navigation - using the screen names as defined in the tab layout
+const TAB_ROUTES = ['/index', '/foryou', '/forlater', '/search'] as const;
 
 // Map of pathname patterns to tab indices for robust matching
 const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
   '/': 0,
+  '/index': 0,
   '/(tabs)': 0,
   '/(tabs)/index': 0,
-  '/(tabs)/foryou': 1,
   '/foryou': 1,
-  '/(tabs)/forlater': 2,
+  '/(tabs)/foryou': 1,
   '/forlater': 2,
-  '/(tabs)/search': 3,
+  '/(tabs)/forlater': 2,
   '/search': 3,
+  '/(tabs)/search': 3,
 };
 
 // Swipe configuration
@@ -68,8 +69,8 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
     logDebug('Target index calculated', { currentIndex, targetIndex, direction });
 
     // Check bounds
-    if (targetIndex < 0 || targetIndex >= TAB_ORDER.length) {
-      logDebug('Target index out of bounds', { targetIndex, tabOrderLength: TAB_ORDER.length });
+    if (targetIndex < 0 || targetIndex >= TAB_ROUTES.length) {
+      logDebug('Target index out of bounds', { targetIndex, tabOrderLength: TAB_ROUTES.length });
       return;
     }
 
@@ -77,16 +78,21 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
     isNavigating.current = true;
     setTimeout(() => {
       isNavigating.current = false;
-    }, 300);
+    }, 500);
 
-    const targetRoute = TAB_ORDER[targetIndex];
+    const targetRoute = TAB_ROUTES[targetIndex];
     logDebug('Navigating to tab', { targetRoute, targetIndex });
 
     // Provide haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    // Navigate to target tab
-    router.replace(targetRoute);
+    // Navigate to target tab using navigate() which works better with tabs
+    try {
+      router.navigate(targetRoute as never);
+      logDebug('Navigation completed successfully');
+    } catch (error) {
+      logDebug('Navigation error', { error: String(error) });
+    }
   }, [pathname, router]);
 
   const handleGestureEnd = useCallback((event: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
