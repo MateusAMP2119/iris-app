@@ -70,7 +70,7 @@ export default function ForLaterScreen() {
   const renderItem = useCallback(({ item }: { item: SavedArticle }) => (
     <View style={styles.cardContainer}>
       <ReadLaterCard
-        source={item.sourceName}
+        sourceLogo={item.sourceLogo}
         headline={item.title}
         thumbnailUrl={item.imgUrl}
         date={getTimeAgo(item.publicationDate)}

@@ -19,6 +19,7 @@ export interface Source {
   sourceId: number;
   sourceName: string;
   sourceUrl: string;
+  logo: string | null;
   reliabilityRating: string;
   isActive: boolean;
   createdAt: string;

@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, borderRadius, shadows, animations, sizes } from '../constants/theme';
 
 interface ReadLaterCardProps {
-  source: string | null;
+  sourceLogo: string | null;
   headline: string;
   thumbnailUrl: string | null;
   date: string;
@@ -21,7 +21,7 @@ interface ReadLaterCardProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function ReadLaterCard({
-  source,
+  sourceLogo,
   headline,
   thumbnailUrl,
   date,
@@ -56,10 +56,13 @@ export function ReadLaterCard({
       onPressOut={handlePressOut}
     >
       <View style={styles.content}>
-        {source && (
-          <Text style={styles.source} numberOfLines={1}>
-            {source}
-          </Text>
+        {sourceLogo && (
+          <Image
+            source={{ uri: sourceLogo }}
+            style={styles.sourceLogo}
+            contentFit="contain"
+            transition={200}
+          />
         )}
         <Text style={styles.headline} numberOfLines={3}>
           {headline}
@@ -118,10 +121,9 @@ const styles = StyleSheet.create({
     marginRight: spacing.md,
     justifyContent: 'center',
   },
-  source: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: '600',
-    color: colors.primary.text,
+  sourceLogo: {
+    height: 18,
+    width: 100,
     marginBottom: spacing.xs,
   },
   headline: {

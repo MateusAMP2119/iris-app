@@ -19,7 +19,7 @@ const { width: screenWidth } = Dimensions.get('window');
 
 interface NewsCardProps {
   imageUrl: string | null;
-  source: string | null;
+  sourceLogo: string | null;
   headline: string;
   date: string;
   isBookmarked: boolean;
@@ -33,7 +33,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function NewsCard({
   imageUrl,
-  source,
+  sourceLogo,
   headline,
   date,
   isBookmarked,
@@ -107,11 +107,14 @@ export function NewsCard({
 
       {/* Content Section */}
       <View style={styles.content}>
-        {/* Source Label - Below image */}
-        {source && (
-          <Text style={styles.sourceText} numberOfLines={1}>
-            {source}
-          </Text>
+        {/* Source Logo - Below image */}
+        {sourceLogo && (
+          <Image
+            source={{ uri: sourceLogo }}
+            style={styles.sourceLogo}
+            contentFit="contain"
+            transition={200}
+          />
         )}
         
         <Text
@@ -176,10 +179,9 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
   },
-  sourceText: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: '600',
-    color: colors.primary.text,
+  sourceLogo: {
+    height: 18,
+    width: 100,
     marginBottom: spacing.sm,
   },
   headline: {

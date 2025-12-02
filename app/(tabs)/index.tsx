@@ -73,7 +73,7 @@ export default function TodayScreen() {
         <View>
           <NewsCard
             imageUrl={featuredArticle.imgUrl}
-            source={featuredArticle.source?.sourceName ?? null}
+            sourceLogo={featuredArticle.source?.logo ?? null}
             headline={featuredArticle.title}
             date={getTimeAgo(featuredArticle.publicationDate)}
             isBookmarked={isArticleSaved(featuredArticle.articleId)}
@@ -97,7 +97,7 @@ export default function TodayScreen() {
       <View style={[styles.gridItem, isLeft ? styles.gridItemLeft : styles.gridItemRight]}>
         <NewsCard
           imageUrl={item.imgUrl}
-          source={item.source?.sourceName ?? null}
+          sourceLogo={item.source?.logo ?? null}
           headline={item.title}
           date={getTimeAgo(item.publicationDate)}
           isBookmarked={isArticleSaved(item.articleId)}
