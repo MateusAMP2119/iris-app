@@ -2,8 +2,8 @@ import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors, sizes, spacing } from '../constants/theme';
-import { useTabBarVisibility } from '../contexts';
+import { colors, sizes, spacing } from '../../lib/constants';
+import { useTabBarVisibility } from '../../src/contexts';
 
 // Configuration constants
 const TAB_BAR_HIDE_OFFSET = 120; // Distance to translate when hiding

@@ -12,10 +12,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { NewsCard, EmptyState, LoadingIndicator } from '../../src/components';
+import { NewsCard, EmptyState, LoadingIndicator } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
-import { colors, spacing, layout, typography, borderRadius } from '../../src/constants/theme';
+import { colors, spacing, layout, typography, borderRadius } from '../../lib/constants';
 import { getTimeAgo, Article } from '../../models';
 
 export default function SearchScreen() {

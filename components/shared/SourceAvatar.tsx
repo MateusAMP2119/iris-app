@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import { colors, typography, spacing, sizes } from '../constants/theme';
+import { colors, typography, spacing, sizes } from '../../lib/constants';
 
 interface SourceAvatarProps {
   sourceName: string;

@@ -7,7 +7,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, borderRadius, shadows, animations, sizes } from '../constants/theme';
+import { colors, typography, spacing, borderRadius, shadows, animations, sizes } from '../../lib/constants';
 
 interface ReadLaterCardProps {
   sourceLogo: string | null;

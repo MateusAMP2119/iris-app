@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Article, ArticlesResponse } from '../../models';
-import { fetchArticles } from '../../services/api';
+import { fetchArticles } from '../../lib/api';
 
 interface UseNewsResult {
   articles: Article[];

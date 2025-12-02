@@ -1,5 +1,7 @@
 import { ArticlesResponse } from '../models';
 
+// API module for all external API calls
+
 const API_BASE_URL = 'http://localhost:8080/api';
 
 export async function fetchArticles(
