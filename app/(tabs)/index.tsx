@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
-import { EmptyState, LoadingIndicator, NewsCard, SectionHeader } from '../../src/components';
-import { colors, layout, spacing, typography } from '../../src/constants/theme';
+import { EmptyState, LoadingIndicator, NewsCard, SectionHeader } from '../../components';
+import { colors, layout, spacing, typography } from '../../lib/constants';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 

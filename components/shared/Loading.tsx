@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { colors, spacing, borderRadius, shadows } from '../constants/theme';
+import { colors, spacing, borderRadius, shadows } from '../../lib/constants';
 
 interface SkeletonCardProps {
   compact?: boolean;

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, typography } from '../constants/theme';
+import { colors, spacing, typography } from '../../lib/constants';
 
 interface SectionHeaderProps {
   title: string;

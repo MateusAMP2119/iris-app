@@ -13,7 +13,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { animations, borderRadius, colors, shadows, spacing, typography } from '../constants/theme';
+import { animations, borderRadius, colors, shadows, spacing, typography } from '../../lib/constants';
 
 const { width: screenWidth } = Dimensions.get('window');
 

@@ -11,10 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { NewsCard, LoadingIndicator, EmptyState } from '../../src/components';
+import { NewsCard, LoadingIndicator, EmptyState } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
-import { colors, spacing, layout, typography } from '../../src/constants/theme';
+import { colors, spacing, layout, typography } from '../../lib/constants';
 import { getTimeAgo, Article } from '../../models';
 
 const { width: screenWidth } = Dimensions.get('window');

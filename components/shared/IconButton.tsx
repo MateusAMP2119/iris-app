@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { colors, typography, spacing, sizes } from '../constants/theme';
+import { colors, typography, spacing, sizes } from '../../lib/constants';
 
 interface IconButtonProps {
   iconName: keyof typeof Ionicons.glyphMap;

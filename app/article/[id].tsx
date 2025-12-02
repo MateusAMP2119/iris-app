@@ -14,11 +14,11 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { LoadingIndicator, EmptyState } from '../../src/components';
+import { LoadingIndicator, EmptyState } from '../../components';
 import { useSavedArticles } from '../../src/contexts';
-import { colors, spacing, typography, borderRadius, sizes, layout } from '../../src/constants/theme';
+import { colors, spacing, typography, borderRadius, sizes, layout } from '../../lib/constants';
 import { Article, getTimeAgo } from '../../models';
-import { fetchArticles } from '../../services/api';
+import { fetchArticles } from '../../lib/api';
 
 export default function ArticleDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
