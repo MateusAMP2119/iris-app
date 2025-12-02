@@ -5,5 +5,4 @@ export { NewsCard } from './NewsCard';
 export { ReadLaterCard } from './ReadLaterCard';
 export { SectionHeader } from './SectionHeader';
 export { SourceAvatar } from './SourceAvatar';
-export { TabBar } from './TabBar';
 

@@ -1,8 +1,7 @@
 import { Stack } from "expo-router";
-import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SavedArticlesProvider, FollowingProvider, TabBarVisibilityProvider } from '../src/contexts';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FollowingProvider, SavedArticlesProvider, TabBarVisibilityProvider } from '../src/contexts';
 
 export default function RootLayout() {
   return (
