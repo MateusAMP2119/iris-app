@@ -165,9 +165,14 @@ export default function ArticleDetailScreen() {
 
         <View style={styles.articleContent}>
           {/* Source Info */}
-          {article.source && (
+          {article.source?.logo && (
             <Pressable style={styles.sourceContainer} onPress={handleOpenSource}>
-              <Text style={styles.sourceName}>{article.source.sourceName}</Text>
+              <Image
+                source={{ uri: article.source.logo }}
+                style={styles.sourceLogo}
+                contentFit="contain"
+                transition={200}
+              />
               <Ionicons
                 name="open-outline"
                 size={14}
@@ -270,10 +275,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     marginBottom: spacing.sm,
   },
-  sourceName: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: '600',
-    color: colors.accent.primary,
+  sourceLogo: {
+    height: 18,
+    width: 100,
   },
   externalIcon: {
     marginLeft: spacing.xs,

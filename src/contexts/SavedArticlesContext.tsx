@@ -61,6 +61,7 @@ export function SavedArticlesProvider({ children }: { children: ReactNode }) {
         subtitle: article.subtitle,
         imgUrl: article.imgUrl,
         sourceName: article.source?.sourceName ?? null,
+        sourceLogo: article.source?.logo ?? null,
         publicationDate: article.publicationDate,
         savedAt: new Date().toISOString(),
       };

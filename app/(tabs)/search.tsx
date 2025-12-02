@@ -109,7 +109,7 @@ export default function SearchScreen() {
     <View style={styles.cardContainer}>
       <NewsCard
         imageUrl={item.imgUrl}
-        source={item.source?.sourceName ?? null}
+        sourceLogo={item.source?.logo ?? null}
         headline={item.title}
         date={getTimeAgo(item.publicationDate)}
         isBookmarked={isArticleSaved(item.articleId)}
