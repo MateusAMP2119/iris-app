@@ -7,6 +7,19 @@ import { useRouter, usePathname } from 'expo-router';
 // Define tab order for navigation
 const TAB_ORDER = ['/(tabs)', '/(tabs)/foryou', '/(tabs)/forlater', '/(tabs)/search'] as const;
 
+// Map of pathname patterns to tab indices for robust matching
+const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
+  '/': 0,
+  '/(tabs)': 0,
+  '/(tabs)/index': 0,
+  '/(tabs)/foryou': 1,
+  '/foryou': 1,
+  '/(tabs)/forlater': 2,
+  '/forlater': 2,
+  '/(tabs)/search': 3,
+  '/search': 3,
+};
+
 // Swipe configuration
 const SWIPE_THRESHOLD = 50; // Minimum horizontal distance to trigger navigation
 const VELOCITY_THRESHOLD = 500; // Minimum velocity to trigger navigation
@@ -20,28 +33,21 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
   const pathname = usePathname();
 
   const navigateToTab = useCallback((direction: 'left' | 'right') => {
-    // Find current tab index
-    let currentIndex = TAB_ORDER.findIndex(tab => {
-      // Handle both index route formats
-      if (pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/index') {
-        return tab === '/(tabs)';
+    // Find current tab index using the pathname map
+    const currentIndex = PATHNAME_TO_TAB_INDEX[pathname];
+    
+    // If pathname is not recognized, don't navigate to prevent unexpected behavior
+    if (currentIndex === undefined) {
+      if (__DEV__) {
+        console.warn(`SwipeableTabWrapper: Unknown pathname "${pathname}". Swipe navigation disabled for this route.`);
       }
-      return tab === pathname || tab.endsWith(pathname);
-    });
-
-    if (currentIndex === -1) {
-      currentIndex = 0;
+      return;
     }
 
     // Calculate target index based on swipe direction
-    let targetIndex: number;
-    if (direction === 'left') {
-      // Swiping left means going to next tab
-      targetIndex = currentIndex + 1;
-    } else {
-      // Swiping right means going to previous tab
-      targetIndex = currentIndex - 1;
-    }
+    const targetIndex = direction === 'left' 
+      ? currentIndex + 1 
+      : currentIndex - 1;
 
     // Check bounds
     if (targetIndex < 0 || targetIndex >= TAB_ORDER.length) {
