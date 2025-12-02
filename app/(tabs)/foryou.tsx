@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { NewsCard, LoadingIndicator, EmptyState } from '../../components';
+import { NewsCard, LoadingIndicator, EmptyState, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 import { colors, spacing, layout, typography } from '../../lib/constants';
@@ -94,47 +94,53 @@ export default function ForYouScreen() {
 
   if (loading && articles.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <LoadingIndicator />
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <LoadingIndicator />
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   if (error && articles.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <EmptyState
-          icon="alert-circle-outline"
-          title="Unable to load news"
-          message={error}
-        />
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <EmptyState
+            icon="alert-circle-outline"
+            title="Unable to load news"
+            message={error}
+          />
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
-      <FlatList
-        data={articles}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.articleId.toString()}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.accent.primary}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+    <SwipeableTabWrapper>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style="dark" />
+        <FlatList
+          data={articles}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.articleId.toString()}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.listContent}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.accent.primary}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </SwipeableTabWrapper>
   );
 }
 

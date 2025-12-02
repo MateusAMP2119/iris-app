@@ -12,7 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { NewsCard, EmptyState, LoadingIndicator } from '../../components';
+import { NewsCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 import { colors, spacing, layout, typography, borderRadius } from '../../lib/constants';
@@ -141,32 +141,36 @@ export default function SearchScreen() {
 
   if (loading && articles.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <LoadingIndicator />
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <LoadingIndicator />
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
-      <FlatList
-        data={isSearching ? filteredArticles : []}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.articleId.toString()}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmptyState}
-        contentContainerStyle={[
-          styles.listContent,
-          (!isSearching || filteredArticles.length === 0) && styles.emptyListContent,
-        ]}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      />
-    </SafeAreaView>
+    <SwipeableTabWrapper>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style="dark" />
+        <FlatList
+          data={isSearching ? filteredArticles : []}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.articleId.toString()}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmptyState}
+          contentContainerStyle={[
+            styles.listContent,
+            (!isSearching || filteredArticles.length === 0) && styles.emptyListContent,
+          ]}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        />
+      </SafeAreaView>
+    </SwipeableTabWrapper>
   );
 }
 

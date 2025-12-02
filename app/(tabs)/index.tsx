@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
-import { EmptyState, LoadingIndicator, NewsCard, SectionHeader } from '../../components';
+import { EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
@@ -111,52 +111,58 @@ export default function TodayScreen() {
 
   if (loading && articles.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <LoadingIndicator />
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <LoadingIndicator />
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   if (error && articles.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <EmptyState
-          icon="alert-circle-outline"
-          title="Unable to load news"
-          message={error}
-        />
-        <Pressable style={styles.retryButton} onPress={handleRefresh}>
-          <Text style={styles.retryText}>Try Again</Text>
-        </Pressable>
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <EmptyState
+            icon="alert-circle-outline"
+            title="Unable to load news"
+            message={error}
+          />
+          <Pressable style={styles.retryButton} onPress={handleRefresh}>
+            <Text style={styles.retryText}>Try Again</Text>
+          </Pressable>
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
-      <FlatList
-        data={topStories}
-        renderItem={renderTopStory}
-        keyExtractor={(item) => item.articleId.toString()}
-        numColumns={2}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.columnWrapper}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.accent.primary}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+    <SwipeableTabWrapper>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style="dark" />
+        <FlatList
+          data={topStories}
+          renderItem={renderTopStory}
+          keyExtractor={(item) => item.articleId.toString()}
+          numColumns={2}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.listContent}
+          columnWrapperStyle={styles.columnWrapper}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.accent.primary}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </SwipeableTabWrapper>
   );
 }
 
