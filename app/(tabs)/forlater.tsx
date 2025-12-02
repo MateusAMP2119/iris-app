@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { ReadLaterCard, EmptyState, LoadingIndicator } from '../../components';
+import { ReadLaterCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { colors, spacing, layout, typography } from '../../lib/constants';
 import { getTimeAgo } from '../../models';
@@ -82,44 +82,48 @@ export default function ForLaterScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <LoadingIndicator />
-      </SafeAreaView>
+      <SwipeableTabWrapper>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="dark" />
+          <LoadingIndicator />
+        </SafeAreaView>
+      </SwipeableTabWrapper>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
-      <FlatList
-        data={savedArticles}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.articleId.toString()}
-        ListHeaderComponent={renderHeader}
-        ListEmptyComponent={
-          <EmptyState
-            icon="bookmark-outline"
-            title="No saved articles"
-            message="Articles you save for later will appear here. Tap the bookmark icon on any article to save it."
-          />
-        }
-        contentContainerStyle={[
-          styles.listContent,
-          savedArticles.length === 0 && styles.emptyListContent,
-        ]}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.accent.primary}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+    <SwipeableTabWrapper>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style="dark" />
+        <FlatList
+          data={savedArticles}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.articleId.toString()}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={
+            <EmptyState
+              icon="bookmark-outline"
+              title="No saved articles"
+              message="Articles you save for later will appear here. Tap the bookmark icon on any article to save it."
+            />
+          }
+          contentContainerStyle={[
+            styles.listContent,
+            savedArticles.length === 0 && styles.emptyListContent,
+          ]}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.accent.primary}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </SwipeableTabWrapper>
   );
 }
 
