@@ -1,21 +1,20 @@
 import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { colors, sizes, spacing } from '../constants/theme';
+import { Animated, LayoutChangeEvent, Text, TouchableOpacity, View } from 'react-native';
+import { colors, sizes } from '../constants/theme';
 import { useTabBarVisibility } from '../contexts';
 
 // Configuration constants
 const TAB_BAR_HIDE_OFFSET = 120; // Distance to translate when hiding
 const PILL_WIDTH_RATIO = 0.7; // Pill width as a ratio of tab width
-const PILL_TOP_OFFSET = 4; // Distance from top of tab container
 
 interface TabMeasurement {
   x: number;
   width: number;
 }
 
-export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { isVisible } = useTabBarVisibility();
   
   // Animation for hiding/showing tab bar
@@ -86,32 +85,14 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
   };
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
-      <LiquidGlassView
-        style={[
-          styles.glassContainer,
-          // Fallback for devices that don't support liquid glass (iOS < 26).
-          // On supported devices, LiquidGlassView renders with the native glass effect.
-          !isLiquidGlassSupported && styles.fallbackBackground,
-        ]}
-        effect="regular"
-      >
-        <View style={styles.tabContainer}>
+    <Animated.View>
+      <LiquidGlassView effect="regular">
+        <View>
           {/* Animated Pill Indicator */}
           {isLayoutReady && (
-            <Animated.View
-              style={[
-                styles.pillIndicator,
-                {
-                  width: pillWidth,
-                  left: pillPosition,
-                },
-                !isLiquidGlassSupported && styles.pillFallback,
-              ]}
-            >
+            <Animated.View>
               {isLiquidGlassSupported && (
                 <LiquidGlassView
-                  style={styles.pillGlass}
                   effect="clear"
                 />
               )}
@@ -162,16 +143,9 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
                 onPress={onPress}
                 onLongPress={onLongPress}
                 onLayout={handleTabLayout(index)}
-                style={styles.tabItem}
               >
                 {options.tabBarIcon?.({ focused: isFocused, color, size: sizes.tabBarIconSize })}
-                <Text
-                  style={[
-                    styles.label,
-                    { color },
-                    isFocused && styles.labelFocused,
-                  ]}
-                >
+                <Text>
                   {typeof label === 'string' ? label : route.name}
                 </Text>
               </TouchableOpacity>
@@ -182,58 +156,3 @@ export function LiquidGlassTabBar({ state, descriptors, navigation }: BottomTabB
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  glassContainer: {
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.md,
-    borderRadius: 24,
-    paddingVertical: spacing.sm,
-  },
-  // Fallback background for devices that don't support liquid glass.
-  // Uses the card background color with 85% opacity to mimic the glass effect.
-  fallbackBackground: {
-    backgroundColor: `${colors.semantic.cardBackground}D9`, // D9 is hex for ~85% opacity
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    position: 'relative',
-  },
-  pillIndicator: {
-    position: 'absolute',
-    top: -PILL_TOP_OFFSET,
-    height: 32,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  pillGlass: {
-    flex: 1,
-    borderRadius: 16,
-  },
-  pillFallback: {
-    backgroundColor: 'rgba(255, 45, 85, 0.15)',
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xs,
-    minHeight: 44,
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: '500',
-    marginTop: 2,
-  },
-  labelFocused: {
-    fontWeight: '600',
-  },
-});
