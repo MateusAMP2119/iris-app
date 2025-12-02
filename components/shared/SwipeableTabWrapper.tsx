@@ -6,7 +6,8 @@ import { useRouter, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
 // Define tab order for navigation - using the screen names as defined in the tab layout
-const TAB_ROUTES = ['/index', '/foryou', '/forlater', '/search'] as const;
+// Note: The first tab (index) uses '/' as its actual path, not '/index'
+const TAB_ROUTES = ['/', '/foryou', '/forlater', '/search'] as const;
 
 // Map of pathname patterns to tab indices for robust matching
 const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
