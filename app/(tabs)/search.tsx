@@ -1,22 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useCallback, useState } from 'react';
 import {
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
-  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
-import { NewsCard, EmptyState, LoadingIndicator } from '../../src/components';
+import { Article, getTimeAgo } from '../../models';
+import { EmptyState, LoadingIndicator, NewsCard } from '../../src/components';
+import { borderRadius, colors, layout, spacing, typography } from '../../src/constants/theme';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
-import { colors, spacing, layout, typography, borderRadius } from '../../src/constants/theme';
-import { getTimeAgo, Article } from '../../models';
 
 export default function SearchScreen() {
   const router = useRouter();
