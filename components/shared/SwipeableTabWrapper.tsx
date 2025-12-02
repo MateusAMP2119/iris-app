@@ -5,7 +5,7 @@ import { runOnJS } from 'react-native-reanimated';
 import { useRouter, usePathname } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
-// Define tab order for navigation - using the screen names as defined in the tab layout
+// Define tab order for navigation
 // Note: The first tab (index) uses '/' as its actual path, not '/index'
 const TAB_ROUTES = ['/', '/foryou', '/forlater', '/search'] as const;
 
@@ -27,11 +27,6 @@ const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
 const SWIPE_THRESHOLD = 80; // Minimum horizontal distance to trigger navigation
 const VELOCITY_THRESHOLD = 800; // Minimum velocity to trigger navigation
 
-// Debug logging helper
-const logDebug = (message: string, data?: Record<string, unknown>) => {
-  console.log(`[SwipeableTabWrapper] ${message}`, data ? JSON.stringify(data, null, 2) : '');
-};
-
 interface SwipeableTabWrapperProps {
   children: ReactNode;
 }
@@ -41,24 +36,17 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
   const pathname = usePathname();
   const isNavigating = useRef(false);
 
-  logDebug('Component rendered', { pathname });
-
   const navigateToTab = useCallback((direction: 'left' | 'right') => {
-    logDebug('navigateToTab called', { direction, isNavigating: isNavigating.current });
-    
     // Prevent multiple navigations
     if (isNavigating.current) {
-      logDebug('Navigation blocked - already navigating');
       return;
     }
     
     // Find current tab index using the pathname map
     const currentIndex = PATHNAME_TO_TAB_INDEX[pathname];
-    logDebug('Current tab index lookup', { pathname, currentIndex });
     
-    // If pathname is not recognized, don't navigate to prevent unexpected behavior
+    // If pathname is not recognized, don't navigate
     if (currentIndex === undefined) {
-      logDebug('Unknown pathname - navigation disabled', { pathname, knownPaths: Object.keys(PATHNAME_TO_TAB_INDEX) });
       return;
     }
 
@@ -67,11 +55,8 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
       ? currentIndex + 1 
       : currentIndex - 1;
 
-    logDebug('Target index calculated', { currentIndex, targetIndex, direction });
-
     // Check bounds
     if (targetIndex < 0 || targetIndex >= TAB_ROUTES.length) {
-      logDebug('Target index out of bounds', { targetIndex, tabOrderLength: TAB_ROUTES.length });
       return;
     }
 
@@ -81,92 +66,37 @@ export function SwipeableTabWrapper({ children }: SwipeableTabWrapperProps) {
       isNavigating.current = false;
     }, 500);
 
-    const targetRoute = TAB_ROUTES[targetIndex];
-    logDebug('Navigating to tab', { targetRoute, targetIndex });
-
     // Provide haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    // Navigate to target tab using navigate() which works better with tabs
-    try {
-      router.navigate(targetRoute as never);
-      logDebug('Navigation completed successfully');
-    } catch (error) {
-      logDebug('Navigation error', { error: String(error) });
-    }
+    // Navigate to target tab
+    router.navigate(TAB_ROUTES[targetIndex] as never);
   }, [pathname, router]);
 
   const handleGestureEnd = useCallback((event: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
-    const { translationX, translationY, velocityX, velocityY } = event;
-    
-    logDebug('Gesture ended', {
-      translationX: Math.round(translationX),
-      translationY: Math.round(translationY),
-      velocityX: Math.round(velocityX),
-      velocityY: Math.round(velocityY),
-    });
+    const { translationX, translationY, velocityX } = event;
     
     // Ensure this is primarily a horizontal swipe (not vertical scrolling)
     const isHorizontalSwipe = Math.abs(translationX) > Math.abs(translationY) * 1.5;
-    
-    logDebug('Horizontal swipe check', {
-      isHorizontalSwipe,
-      absTranslationX: Math.abs(translationX),
-      absTranslationY: Math.abs(translationY),
-      threshold: Math.abs(translationY) * 1.5,
-    });
-    
     if (!isHorizontalSwipe) {
-      logDebug('Rejected - not a horizontal swipe');
       return;
     }
     
     // Check if swipe meets threshold (either by distance or velocity)
-    const meetsDistanceThreshold = Math.abs(translationX) > SWIPE_THRESHOLD;
-    const meetsVelocityThreshold = Math.abs(velocityX) > VELOCITY_THRESHOLD;
-    const isValidSwipe = meetsDistanceThreshold || meetsVelocityThreshold;
-    
-    logDebug('Swipe validation', {
-      meetsDistanceThreshold,
-      meetsVelocityThreshold,
-      isValidSwipe,
-      SWIPE_THRESHOLD,
-      VELOCITY_THRESHOLD,
-    });
+    const isValidSwipe = 
+      Math.abs(translationX) > SWIPE_THRESHOLD || 
+      Math.abs(velocityX) > VELOCITY_THRESHOLD;
     
     if (!isValidSwipe) {
-      logDebug('Rejected - swipe does not meet threshold');
       return;
     }
 
-    // Determine swipe direction
+    // Determine swipe direction and navigate
     const direction = translationX < 0 ? 'left' : 'right';
-    logDebug('Swipe direction determined', { direction, translationX });
-    
     navigateToTab(direction);
   }, [navigateToTab]);
 
-  const handleGestureStart = useCallback(() => {
-    logDebug('Gesture started');
-  }, []);
-
-  const handleGestureUpdate = useCallback((event: { translationX: number; translationY: number }) => {
-    // Only log occasionally to avoid spam
-    if (Math.abs(event.translationX) > 10 || Math.abs(event.translationY) > 10) {
-      logDebug('Gesture update', {
-        translationX: Math.round(event.translationX),
-        translationY: Math.round(event.translationY),
-      });
-    }
-  }, []);
-
   const panGesture = Gesture.Pan()
-    .onStart(() => {
-      runOnJS(handleGestureStart)();
-    })
-    .onUpdate((event) => {
-      runOnJS(handleGestureUpdate)(event);
-    })
     .onEnd((event) => {
       runOnJS(handleGestureEnd)(event);
     })
