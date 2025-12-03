@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   },
   featuredCardWrapper: {
     width: screenWidth * 0.85,
+    height: 350,
     marginRight: spacing.md,
   },
   columnWrapper: {
