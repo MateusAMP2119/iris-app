@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
-import { EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
+import { EmptyState, FeaturedCard, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
@@ -49,8 +49,16 @@ export default function TodayScreen() {
     }
   }, [isArticleSaved, saveArticle, removeArticle]);
 
-  const featuredArticle = articles[0];
-  const topStories = articles.slice(1);
+  // Separate featured articles from regular articles
+  const featuredArticles = useMemo(() => 
+    articles.filter(article => article.isFeatured === true),
+    [articles]
+  );
+
+  const topStories = useMemo(() => 
+    articles.filter(article => !article.isFeatured),
+    [articles]
+  );
 
   // Get current date formatted
   const today = new Date();
@@ -68,18 +76,26 @@ export default function TodayScreen() {
         <Text style={styles.title}>Breaking News</Text>
       </View>
 
-      {/* Featured/Hero Article */}
-      {featuredArticle && (
-        <View>
-          <NewsCard
-            imageUrl={featuredArticle.imgUrl}
-            sourceLogo={featuredArticle.source?.logo ?? null}
-            headline={featuredArticle.title}
-            date={getTimeAgo(featuredArticle.publicationDate)}
-            isBookmarked={isArticleSaved(featuredArticle.articleId)}
-            onPress={() => handleArticlePress(featuredArticle)}
-            onBookmark={() => handleBookmark(featuredArticle)}
-            featured
+      {/* Featured Articles - Horizontal Scroll */}
+      {featuredArticles.length > 0 && (
+        <View style={styles.featuredSection}>
+          <FlatList
+            data={featuredArticles}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => `featured-${item.articleId}`}
+            contentContainerStyle={styles.featuredListContent}
+            renderItem={({ item }) => (
+              <FeaturedCard
+                imageUrl={item.imgUrl}
+                sourceLogo={item.source?.logo ?? null}
+                headline={item.title}
+                date={getTimeAgo(item.publicationDate)}
+                isBookmarked={isArticleSaved(item.articleId)}
+                onPress={() => handleArticlePress(item)}
+                onBookmark={() => handleBookmark(item)}
+              />
+            )}
           />
         </View>
       )}
@@ -190,6 +206,13 @@ const styles = StyleSheet.create({
     fontSize: typography.display.fontSize,
     fontWeight: typography.display.fontWeight,
     color: colors.primary.text,
+  },
+  featuredSection: {
+    marginHorizontal: -layout.screenPaddingHorizontal,
+    marginBottom: spacing.lg,
+  },
+  featuredListContent: {
+    paddingHorizontal: layout.screenPaddingHorizontal,
   },
   columnWrapper: {
     justifyContent: 'space-between',
