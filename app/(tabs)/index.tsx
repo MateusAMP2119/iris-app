@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
   featuredSection: {
     marginHorizontal: -layout.screenPaddingHorizontal,
     marginBottom: spacing.lg,
-    paddingVertical: spacing.sm,
   },
   featuredListContent: {
     paddingHorizontal: layout.screenPaddingHorizontal,
