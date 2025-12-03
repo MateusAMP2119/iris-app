@@ -8,7 +8,9 @@ import {
   Pressable,
   Share,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
+import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -16,6 +18,35 @@ import { useSavedArticles } from '../../src/contexts';
 import { colors, spacing, typography, borderRadius, sizes, layout } from '../../lib/constants';
 import { Article, getTimeAgo } from '../../models';
 import { SavedArticle } from '../../src/types';
+
+// Liquid Glass Button component for header actions
+interface LiquidGlassButtonProps {
+  onPress: () => void;
+  iconName: keyof typeof Ionicons.glyphMap;
+  iconColor?: string;
+  accessibilityLabel?: string;
+}
+
+function LiquidGlassButton({ onPress, iconName, iconColor = colors.primary.text, accessibilityLabel }: LiquidGlassButtonProps) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      style={styles.glassButtonContainer}
+    >
+      <LiquidGlassView
+        style={[
+          styles.glassButton,
+          !isLiquidGlassSupported && styles.glassButtonFallback,
+        ]}
+        effect="regular"
+      >
+        <Ionicons name={iconName} size={20} color={iconColor} />
+      </LiquidGlassView>
+    </TouchableOpacity>
+  );
+}
 
 // Type guard to check if article is a full Article
 function isFullArticle(article: Article | SavedArticle): article is Article {
@@ -90,23 +121,26 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
       onRequestClose={onClose}
     >
       <View style={styles.container}>
-        {/* Header */}
+        {/* Header with Liquid Glass buttons */}
         <View style={styles.header}>
-          <Pressable style={styles.headerButton} onPress={onClose}>
-            <Ionicons name="close" size={24} color={colors.primary.text} />
-          </Pressable>
+          <LiquidGlassButton
+            onPress={onClose}
+            iconName="close"
+            accessibilityLabel="Close article"
+          />
           
           <View style={styles.headerActions}>
-            <Pressable style={styles.headerButton} onPress={handleBookmark}>
-              <Ionicons
-                name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-                size={24}
-                color={bookmarked ? colors.accent.primary : colors.primary.text}
-              />
-            </Pressable>
-            <Pressable style={styles.headerButton} onPress={handleShare}>
-              <Ionicons name="share-outline" size={24} color={colors.primary.text} />
-            </Pressable>
+            <LiquidGlassButton
+              onPress={handleBookmark}
+              iconName={bookmarked ? 'bookmark' : 'bookmark-outline'}
+              iconColor={bookmarked ? colors.accent.primary : colors.primary.text}
+              accessibilityLabel={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+            />
+            <LiquidGlassButton
+              onPress={handleShare}
+              iconName="share-outline"
+              accessibilityLabel="Share article"
+            />
           </View>
         </View>
 
@@ -226,16 +260,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.semantic.divider,
   },
-  headerButton: {
+  glassButtonContainer: {
     width: sizes.touchTarget,
     height: sizes.touchTarget,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  glassButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  glassButtonFallback: {
+    backgroundColor: `${colors.secondary.gray200}CC`, // Fallback for non-supported devices
+  },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   scrollView: {
     flex: 1,
