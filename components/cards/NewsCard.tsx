@@ -21,6 +21,7 @@ interface NewsCardProps {
   imageUrl: string | null;
   sourceLogo: string | null;
   headline: string;
+  authorName: string | null;
   date: string;
   isBookmarked: boolean;
   onPress: () => void;
@@ -35,6 +36,7 @@ export function NewsCard({
   imageUrl,
   sourceLogo,
   headline,
+  authorName,
   date,
   isBookmarked,
   onPress,
@@ -128,7 +130,9 @@ export function NewsCard({
         </Text>
         
         <View style={styles.footer}>
-          <Text style={styles.date}>{date}</Text>
+          <Text style={styles.date}>
+            {authorName ? `${authorName} · ${date}` : date}
+          </Text>
           
           {/* Bookmark Button - Bottom right */}
           <Pressable

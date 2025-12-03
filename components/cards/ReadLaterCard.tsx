@@ -13,9 +13,9 @@ interface ReadLaterCardProps {
   sourceLogo: string | null;
   headline: string;
   thumbnailUrl: string | null;
+  authorName: string | null;
   date: string;
   onPress: () => void;
-  onDelete: () => void;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -24,9 +24,9 @@ export function ReadLaterCard({
   sourceLogo,
   headline,
   thumbnailUrl,
+  authorName,
   date,
   onPress,
-  onDelete,
 }: ReadLaterCardProps) {
   const scale = useSharedValue(1);
 
@@ -67,7 +67,9 @@ export function ReadLaterCard({
         <Text style={styles.headline} numberOfLines={3}>
           {headline}
         </Text>
-        <Text style={styles.date}>{date}</Text>
+        <Text style={styles.date}>
+          {authorName ? `${authorName} · ${date}` : date}
+        </Text>
       </View>
 
       <View style={styles.rightSection}>
@@ -88,21 +90,6 @@ export function ReadLaterCard({
             />
           </View>
         )}
-        
-        <Pressable
-          style={styles.deleteButton}
-          onPress={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          hitSlop={8}
-        >
-          <Ionicons
-            name="close-circle"
-            size={22}
-            color={colors.secondary.gray400}
-          />
-        </Pressable>
       </View>
     </AnimatedPressable>
   );
@@ -139,7 +126,7 @@ const styles = StyleSheet.create({
   },
   rightSection: {
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   thumbnail: {
     width: sizes.thumbnailMedium,
@@ -154,10 +141,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary.gray200,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  deleteButton: {
-    marginTop: spacing.sm,
-    padding: spacing.xs,
   },
 });
 

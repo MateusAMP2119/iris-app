@@ -28,6 +28,7 @@ export interface SavedArticle {
   imgUrl: string | null;
   sourceName: string | null;
   sourceLogo: string | null;
+  authorName: string | null;
   publicationDate: string;
   savedAt: string;
 }

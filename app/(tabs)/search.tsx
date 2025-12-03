@@ -18,6 +18,14 @@ import { useNews } from '../../src/hooks';
 import { colors, spacing, layout, typography, borderRadius } from '../../lib/constants';
 import { getTimeAgo, Article } from '../../models';
 
+// Helper function to get the first author's name from an article
+const getAuthorName = (article: Article): string | null => {
+  if (article.authors && article.authors.length > 0) {
+    return `${article.authors[0].firstName} ${article.authors[0].lastName}`;
+  }
+  return null;
+};
+
 export default function SearchScreen() {
   const router = useRouter();
   const { articles, loading } = useNews(20);
@@ -111,6 +119,7 @@ export default function SearchScreen() {
         imageUrl={item.imgUrl}
         sourceLogo={item.source?.logo ?? null}
         headline={item.title}
+        authorName={getAuthorName(item)}
         date={getTimeAgo(item.publicationDate)}
         isBookmarked={isArticleSaved(item.articleId)}
         onPress={() => handleArticlePress(item)}

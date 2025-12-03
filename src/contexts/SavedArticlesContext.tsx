@@ -55,6 +55,11 @@ export function SavedArticlesProvider({ children }: { children: ReactNode }) {
 
   const saveArticle = useCallback(
     async (article: Article) => {
+      // Get the first author's name if available
+      const authorName = article.authors && article.authors.length > 0
+        ? `${article.authors[0].firstName} ${article.authors[0].lastName}`
+        : null;
+
       const savedArticle: SavedArticle = {
         articleId: article.articleId,
         title: article.title,
@@ -62,6 +67,7 @@ export function SavedArticlesProvider({ children }: { children: ReactNode }) {
         imgUrl: article.imgUrl,
         sourceName: article.source?.sourceName ?? null,
         sourceLogo: article.source?.logo ?? null,
+        authorName,
         publicationDate: article.publicationDate,
         savedAt: new Date().toISOString(),
       };

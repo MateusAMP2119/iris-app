@@ -5,11 +5,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { ReadLaterCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
@@ -19,7 +17,7 @@ import { SavedArticle } from '../../src/types';
 
 export default function ForLaterScreen() {
   const router = useRouter();
-  const { savedArticles, removeArticle, loading } = useSavedArticles();
+  const { savedArticles, loading } = useSavedArticles();
   const { handleScroll } = useTabBarVisibility();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -36,25 +34,6 @@ export default function ForLaterScreen() {
       params: { id: article.articleId.toString() },
     });
   }, [router]);
-
-  const handleDelete = useCallback(async (article: SavedArticle) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
-    Alert.alert(
-      'Remove Article',
-      'Are you sure you want to remove this article from your reading list?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            await removeArticle(article.articleId);
-          },
-        },
-      ]
-    );
-  }, [removeArticle]);
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -73,12 +52,12 @@ export default function ForLaterScreen() {
         sourceLogo={item.sourceLogo}
         headline={item.title}
         thumbnailUrl={item.imgUrl}
+        authorName={item.authorName}
         date={getTimeAgo(item.publicationDate)}
         onPress={() => handleArticlePress(item)}
-        onDelete={() => handleDelete(item)}
       />
     </View>
-  ), [handleArticlePress, handleDelete]);
+  ), [handleArticlePress]);
 
   if (loading) {
     return (
