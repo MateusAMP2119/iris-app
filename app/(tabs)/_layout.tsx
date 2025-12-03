@@ -8,11 +8,6 @@ export default function TabLayout() {
         <Label>Today</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="foryou">
-        <Icon sf="person.fill" drawable="ic_menu_person" />
-        <Label>For You</Label>
-      </NativeTabs.Trigger>
-
       <NativeTabs.Trigger name="forlater">
         <Icon sf="bookmark.fill" drawable="ic_menu_bookmark" />
         <Label>For Later</Label>

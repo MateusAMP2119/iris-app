@@ -8,7 +8,6 @@ export { Article, Author, Category, Source, ArticlesResponse } from '../../model
 // Navigation types for typed routes
 export type RootTabParamList = {
   Today: undefined;
-  ForYou: undefined;
   ForLater: undefined;
   Search: undefined;
 };
