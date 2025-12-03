@@ -16,7 +16,7 @@ import Animated, {
 import { animations, borderRadius, colors, shadows, spacing, typography } from '../../lib/constants';
 
 const { width: screenWidth } = Dimensions.get('window');
-const CARD_WIDTH = screenWidth * 0.75;
+const CARD_WIDTH = screenWidth * 0.85;
 
 interface FeaturedCardProps {
   imageUrl: string | null;
@@ -144,13 +144,13 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 150,
+    height: 200,
     backgroundColor: colors.secondary.gray100,
     borderRadius: borderRadius.md,
   },
   imagePlaceholder: {
     width: '100%',
-    height: 150,
+    height: 200,
     backgroundColor: colors.secondary.gray100,
     justifyContent: 'center',
     alignItems: 'center',
