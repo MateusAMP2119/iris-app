@@ -38,6 +38,8 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
     if (isArticleSaved(article.articleId)) {
       await removeArticle(article.articleId);
     } else if (isFullArticle(article)) {
+      // Only full Articles can be saved (SavedArticles are already saved and 
+      // only appear in the For Later screen where they can be removed)
       await saveArticle(article);
     }
   }, [article, isArticleSaved, saveArticle, removeArticle]);
@@ -126,7 +128,12 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           <View style={styles.articleContent}>
             {/* Source Info */}
             {sourceLogo && (
-              <Pressable style={styles.sourceContainer} onPress={hasUrl ? handleOpenSource : undefined}>
+              <Pressable 
+                style={styles.sourceContainer} 
+                onPress={hasUrl ? handleOpenSource : undefined}
+                accessibilityRole={hasUrl ? 'button' : undefined}
+                accessibilityLabel={hasUrl ? 'Open source website' : undefined}
+              >
                 <Image
                   source={{ uri: sourceLogo }}
                   style={styles.sourceLogo}
@@ -183,7 +190,12 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
 
             {/* Read More Button - only show if we have a URL */}
             {hasUrl && (
-              <Pressable style={styles.readMoreButton} onPress={handleOpenSource}>
+              <Pressable 
+                style={styles.readMoreButton} 
+                onPress={handleOpenSource}
+                accessibilityRole="button"
+                accessibilityLabel="Read full article"
+              >
                 <Text style={styles.readMoreText}>Read full article</Text>
                 <Ionicons
                   name="arrow-forward"
@@ -323,5 +335,3 @@ const styles = StyleSheet.create({
     color: colors.primary.background,
   },
 });
-
-export default ArticleModal;
