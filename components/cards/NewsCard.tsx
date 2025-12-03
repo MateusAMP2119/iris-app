@@ -130,13 +130,13 @@ export function NewsCard({
         </Text>
         
         <View style={styles.footer}>
-          <Text style={styles.date}>
+          <Text style={styles.date} numberOfLines={1}>
             {authorName ? `${authorName} · ${date}` : date}
           </Text>
           
           {/* Bookmark Button - Bottom right */}
           <Pressable
-            style={styles.bookmarkButton}
+            style={[styles.bookmarkButton, compact && styles.bookmarkButtonCompact]}
             onPress={(e) => {
               e.stopPropagation();
               onBookmark();
@@ -145,7 +145,7 @@ export function NewsCard({
           >
             <Ionicons
               name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
-              size={22}
+              size={compact ? 18 : 22}
               color={isBookmarked ? colors.accent.primary : colors.secondary.gray300}
             />
           </Pressable>
@@ -205,6 +205,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   date: {
+    flex: 1,
     fontSize: typography.caption.fontSize,
     color: typography.caption.color,
   },
@@ -215,6 +216,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: -spacing.sm,
     marginBottom: -spacing.sm,
+  },
+  bookmarkButtonCompact: {
+    width: 36,
+    height: 36,
+    marginRight: -spacing.xs,
+    marginBottom: -spacing.xs,
   },
 });
 
