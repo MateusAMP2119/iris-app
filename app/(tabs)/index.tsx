@@ -12,9 +12,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Article, getTimeAgo } from '../../models';
 import { EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
+import { Article, getTimeAgo } from '../../models';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 
@@ -212,10 +212,10 @@ const styles = StyleSheet.create({
   },
   featuredSection: {
     marginHorizontal: -layout.screenPaddingHorizontal,
-    marginBottom: spacing.lg,
   },
   featuredListContent: {
     paddingHorizontal: layout.screenPaddingHorizontal,
+    padding: spacing.xs
   },
   featuredCardWrapper: {
     width: screenWidth * 0.85,
