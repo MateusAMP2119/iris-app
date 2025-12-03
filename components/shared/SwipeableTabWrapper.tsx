@@ -7,7 +7,7 @@ import * as Haptics from 'expo-haptics';
 
 // Define tab order for navigation
 // Note: The first tab (index) uses '/' as its actual path, not '/index'
-const TAB_ROUTES = ['/', '/foryou', '/forlater', '/search'] as const;
+const TAB_ROUTES = ['/', '/forlater', '/search'] as const;
 
 // Map of pathname patterns to tab indices for robust matching
 const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
@@ -15,12 +15,10 @@ const PATHNAME_TO_TAB_INDEX: Record<string, number> = {
   '/index': 0,
   '/(tabs)': 0,
   '/(tabs)/index': 0,
-  '/foryou': 1,
-  '/(tabs)/foryou': 1,
-  '/forlater': 2,
-  '/(tabs)/forlater': 2,
-  '/search': 3,
-  '/(tabs)/search': 3,
+  '/forlater': 1,
+  '/(tabs)/forlater': 1,
+  '/search': 2,
+  '/(tabs)/search': 2,
 };
 
 // Swipe configuration
