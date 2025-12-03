@@ -64,7 +64,7 @@ export function ReadLaterCard({
             transition={200}
           />
         )}
-        <Text style={styles.headline} numberOfLines={3}>
+        <Text style={styles.headline} numberOfLines={4}>
           {headline}
         </Text>
         <Text style={styles.date}>
@@ -129,14 +129,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   thumbnail: {
-    width: sizes.thumbnailMedium,
-    height: sizes.thumbnailMedium,
+    width: sizes.thumbnailLarge,
+    height: sizes.thumbnailLarge,
     borderRadius: borderRadius.sm,
     backgroundColor: colors.secondary.gray200,
   },
   thumbnailPlaceholder: {
-    width: sizes.thumbnailMedium,
-    height: sizes.thumbnailMedium,
+    width: sizes.thumbnailLarge,
+    height: sizes.thumbnailLarge,
     borderRadius: borderRadius.sm,
     backgroundColor: colors.secondary.gray200,
     justifyContent: 'center',
