@@ -2,6 +2,20 @@
  * Date & text helpers for the News Aggregator App
  */
 
+import { Author } from '../models';
+
+/**
+ * Get the full name of the first author from an authors array
+ * @param authors - Array of Author objects
+ * @returns Full name of the first author, or null if no authors
+ */
+export function getAuthorName(authors: Author[] | undefined | null): string | null {
+  if (authors && authors.length > 0) {
+    return `${authors[0].firstName} ${authors[0].lastName}`;
+  }
+  return null;
+}
+
 /**
  * Get a human-readable relative time string from a date
  * @param dateString - ISO date string

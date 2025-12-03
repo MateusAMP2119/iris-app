@@ -14,19 +14,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
 import { EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
-import { colors, layout, spacing, typography } from '../../lib/constants';
+import { colors, layout, spacing, typography, getAuthorName } from '../../lib';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 
 const { width: screenWidth } = Dimensions.get('window');
-
-// Helper function to get the first author's name from an article
-const getAuthorName = (article: Article): string | null => {
-  if (article.authors && article.authors.length > 0) {
-    return `${article.authors[0].firstName} ${article.authors[0].lastName}`;
-  }
-  return null;
-};
 
 export default function TodayScreen() {
   const router = useRouter();
@@ -83,7 +75,7 @@ export default function TodayScreen() {
             imageUrl={featuredArticle.imgUrl}
             sourceLogo={featuredArticle.source?.logo ?? null}
             headline={featuredArticle.title}
-            authorName={getAuthorName(featuredArticle)}
+            authorName={getAuthorName(featuredArticle.authors)}
             date={getTimeAgo(featuredArticle.publicationDate)}
             isBookmarked={isArticleSaved(featuredArticle.articleId)}
             onPress={() => handleArticlePress(featuredArticle)}
@@ -108,7 +100,7 @@ export default function TodayScreen() {
           imageUrl={item.imgUrl}
           sourceLogo={item.source?.logo ?? null}
           headline={item.title}
-          authorName={getAuthorName(item)}
+          authorName={getAuthorName(item.authors)}
           date={getTimeAgo(item.publicationDate)}
           isBookmarked={isArticleSaved(item.articleId)}
           onPress={() => handleArticlePress(item)}

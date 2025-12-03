@@ -15,16 +15,8 @@ import { useRouter } from 'expo-router';
 import { NewsCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
-import { colors, spacing, layout, typography, borderRadius } from '../../lib/constants';
+import { colors, spacing, layout, typography, borderRadius, getAuthorName } from '../../lib';
 import { getTimeAgo, Article } from '../../models';
-
-// Helper function to get the first author's name from an article
-const getAuthorName = (article: Article): string | null => {
-  if (article.authors && article.authors.length > 0) {
-    return `${article.authors[0].firstName} ${article.authors[0].lastName}`;
-  }
-  return null;
-};
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -119,7 +111,7 @@ export default function SearchScreen() {
         imageUrl={item.imgUrl}
         sourceLogo={item.source?.logo ?? null}
         headline={item.title}
-        authorName={getAuthorName(item)}
+        authorName={getAuthorName(item.authors)}
         date={getTimeAgo(item.publicationDate)}
         isBookmarked={isArticleSaved(item.articleId)}
         onPress={() => handleArticlePress(item)}
