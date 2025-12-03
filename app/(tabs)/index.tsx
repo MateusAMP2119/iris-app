@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Article, getTimeAgo } from '../../models';
-import { EmptyState, FeaturedCard, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
+import { EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
@@ -86,15 +86,18 @@ export default function TodayScreen() {
             keyExtractor={(item) => `featured-${item.articleId}`}
             contentContainerStyle={styles.featuredListContent}
             renderItem={({ item }) => (
-              <FeaturedCard
-                imageUrl={item.imgUrl}
-                sourceLogo={item.source?.logo ?? null}
-                headline={item.title}
-                date={getTimeAgo(item.publicationDate)}
-                isBookmarked={isArticleSaved(item.articleId)}
-                onPress={() => handleArticlePress(item)}
-                onBookmark={() => handleBookmark(item)}
-              />
+              <View style={styles.featuredCardWrapper}>
+                <NewsCard
+                  imageUrl={item.imgUrl}
+                  sourceLogo={item.source?.logo ?? null}
+                  headline={item.title}
+                  date={getTimeAgo(item.publicationDate)}
+                  isBookmarked={isArticleSaved(item.articleId)}
+                  onPress={() => handleArticlePress(item)}
+                  onBookmark={() => handleBookmark(item)}
+                  featured
+                />
+              </View>
             )}
           />
         </View>
@@ -213,6 +216,10 @@ const styles = StyleSheet.create({
   },
   featuredListContent: {
     paddingHorizontal: layout.screenPaddingHorizontal,
+  },
+  featuredCardWrapper: {
+    width: screenWidth * 0.85,
+    marginRight: spacing.md,
   },
   columnWrapper: {
     justifyContent: 'space-between',

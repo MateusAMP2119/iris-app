@@ -4,7 +4,7 @@
  */
 
 // Card components - Article cards, category cards, etc.
-export { NewsCard, ReadLaterCard, FeaturedCard } from './cards';
+export { NewsCard, ReadLaterCard } from './cards';
 
 // Layout components - Header, navigation bar, tab bar
 export { SectionHeader, LiquidGlassTabBar } from './layout';
