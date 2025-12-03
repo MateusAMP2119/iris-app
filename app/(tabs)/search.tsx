@@ -11,21 +11,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
-import { NewsCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
+import { ArticleModal, NewsCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { useNews } from '../../src/hooks';
 import { colors, spacing, layout, typography, borderRadius } from '../../lib/constants';
 import { getTimeAgo, Article } from '../../models';
 
 export default function SearchScreen() {
-  const router = useRouter();
   const { articles, loading } = useNews(20);
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
   const { handleScroll } = useTabBarVisibility();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Filter articles based on search query
   const filteredArticles = searchQuery.trim()
@@ -40,11 +40,14 @@ export default function SearchScreen() {
     : [];
 
   const handleArticlePress = useCallback((article: Article) => {
-    router.push({
-      pathname: '/article/[id]',
-      params: { id: article.articleId.toString() },
-    });
-  }, [router]);
+    setSelectedArticle(article);
+    setModalVisible(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalVisible(false);
+    setSelectedArticle(null);
+  }, []);
 
   const handleBookmark = useCallback(async (article: Article) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -168,6 +171,11 @@ export default function SearchScreen() {
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+        />
+        <ArticleModal
+          article={selectedArticle}
+          visible={modalVisible}
+          onClose={handleCloseModal}
         />
       </SafeAreaView>
     </SwipeableTabWrapper>

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   FlatList,
   RefreshControl,
@@ -10,18 +10,18 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
-import { ReadLaterCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
+import { ArticleModal, ReadLaterCard, EmptyState, LoadingIndicator, SwipeableTabWrapper } from '../../components';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
 import { colors, spacing, layout, typography } from '../../lib/constants';
 import { getTimeAgo } from '../../models';
 import { SavedArticle } from '../../src/types';
 
 export default function ForLaterScreen() {
-  const router = useRouter();
   const { savedArticles, removeArticle, loading } = useSavedArticles();
   const { handleScroll } = useTabBarVisibility();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<SavedArticle | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -31,11 +31,14 @@ export default function ForLaterScreen() {
   }, []);
 
   const handleArticlePress = useCallback((article: SavedArticle) => {
-    router.push({
-      pathname: '/article/[id]',
-      params: { id: article.articleId.toString() },
-    });
-  }, [router]);
+    setSelectedArticle(article);
+    setModalVisible(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalVisible(false);
+    setSelectedArticle(null);
+  }, []);
 
   const handleDelete = useCallback(async (article: SavedArticle) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -121,6 +124,11 @@ export default function ForLaterScreen() {
             />
           }
           showsVerticalScrollIndicator={false}
+        />
+        <ArticleModal
+          article={selectedArticle}
+          visible={modalVisible}
+          onClose={handleCloseModal}
         />
       </SafeAreaView>
     </SwipeableTabWrapper>
