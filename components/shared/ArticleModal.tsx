@@ -534,13 +534,14 @@ const styles = StyleSheet.create({
     width: FAB_SIZE,
     height: FAB_SIZE,
     borderRadius: FAB_SIZE / 2,
-    overflow: 'hidden',
+    // Adding padding creates more surface area for the glass effect to show
+    padding: 2,
   },
   fabInner: {
-    width: FAB_SIZE,
-    height: FAB_SIZE,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: (FAB_SIZE - 4) / 2,
   },
   fabOptionWrapper: {
     position: 'absolute',
@@ -550,13 +551,13 @@ const styles = StyleSheet.create({
     width: FAB_OPTION_SIZE,
     height: FAB_OPTION_SIZE,
     borderRadius: FAB_OPTION_SIZE / 2,
-    overflow: 'hidden',
+    padding: 2,
   },
   fabOptionInner: {
-    width: FAB_OPTION_SIZE,
-    height: FAB_OPTION_SIZE,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: (FAB_OPTION_SIZE - 4) / 2,
   },
   // Fallback background for devices that don't support liquid glass.
   // Uses the card background color with 85% opacity to mimic the glass effect.
