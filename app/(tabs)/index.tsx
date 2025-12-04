@@ -1,5 +1,4 @@
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useMemo } from 'react';
 import {
@@ -12,7 +11,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { EmptyState, FeaturedCard, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
+import { Article, getTimeAgo } from '../../models';
+import { ArticleModal, EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
 import { Article, getTimeAgo } from '../../models';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
@@ -21,11 +21,12 @@ import { useNews } from '../../src/hooks';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function TodayScreen() {
-  const router = useRouter();
   const { articles, loading, error, refresh } = useNews(10);
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
   const { handleScroll } = useTabBarVisibility();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -34,11 +35,14 @@ export default function TodayScreen() {
   }, [refresh]);
 
   const handleArticlePress = useCallback((article: Article) => {
-    router.push({
-      pathname: '/article/[id]',
-      params: { id: article.articleId.toString() },
-    });
-  }, [router]);
+    setSelectedArticle(article);
+    setModalVisible(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalVisible(false);
+    setSelectedArticle(null);
+  }, []);
 
   const handleBookmark = useCallback(async (article: Article) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -176,6 +180,11 @@ export default function TodayScreen() {
             />
           }
           showsVerticalScrollIndicator={false}
+        />
+        <ArticleModal
+          article={selectedArticle}
+          visible={modalVisible}
+          onClose={handleCloseModal}
         />
       </SafeAreaView>
     </SwipeableTabWrapper>

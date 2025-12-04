@@ -10,4 +10,4 @@ export { NewsCard, ReadLaterCard, FeaturedCard } from './cards';
 export { SectionHeader, LiquidGlassTabBar } from './layout';
 
 // Shared components - Buttons, loaders, UI primitives
-export { EmptyState, IconButton, SkeletonCard, LoadingIndicator, SourceAvatar, SwipeableTabWrapper } from './shared';
+export { ArticleModal, EmptyState, IconButton, SkeletonCard, LoadingIndicator, SourceAvatar, SwipeableTabWrapper } from './shared';
