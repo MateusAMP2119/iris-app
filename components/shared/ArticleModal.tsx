@@ -2,12 +2,13 @@ import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   Animated,
-  LayoutChangeEvent,
   Linking,
   Modal,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
   ScrollView,
   Share,
@@ -20,14 +21,10 @@ import { Article, getTimeAgo } from '../../models';
 import { useSavedArticles } from '../../src/contexts';
 import { SavedArticle } from '../../src/types';
 
-// Configuration constants for the liquid glass tab bar
-const PILL_WIDTH_RATIO = 0.7; // Pill width as a ratio of tab width
-const PILL_TOP_OFFSET = 4; // Distance from top of tab container
-
-interface TabMeasurement {
-  x: number;
-  width: number;
-}
+// Configuration constants for scroll-based button hiding
+const SCROLL_THRESHOLD = 10; // Minimum scroll distance to trigger hide/show
+const INITIAL_SCROLL_OFFSET = 50; // Scroll position before hiding starts
+const BUTTON_HIDE_OFFSET = 100; // Distance to translate buttons when hiding
 
 // Type guard to check if article is a full Article
 function isFullArticle(article: Article | SavedArticle): article is Article {
@@ -43,47 +40,52 @@ interface ArticleModalProps {
 export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
   
-  // Animation for the pill indicator (similar to LiquidGlassTabBar)
-  const pillPosition = useRef(new Animated.Value(0)).current;
-  const pillWidth = useRef(new Animated.Value(0)).current;
+  // Animation for hiding/showing action buttons on scroll
+  const translateY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
   
-  // Store tab measurements
-  const [tabMeasurements, setTabMeasurements] = useState<TabMeasurement[]>([]);
-  const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
-  
-  // Reset state when modal becomes visible
-  useEffect(() => {
-    if (visible) {
-      setActiveTabIndex(0);
-      setTabMeasurements([]);
-      setIsLayoutReady(false);
+  // Handle scroll events to show/hide buttons
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    const scrollDiff = currentScrollY - lastScrollY.current;
+    
+    // Update last scroll position
+    lastScrollY.current = currentScrollY;
+
+    // Always show when at the top
+    if (currentScrollY <= 0) {
+      translateY.stopAnimation();
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 60,
+        friction: 12,
+      }).start();
+      return;
     }
-  }, [visible]);
-  
-  // Animate pill to the active tab
-  useEffect(() => {
-    if (isLayoutReady && tabMeasurements[activeTabIndex]) {
-      const tab = tabMeasurements[activeTabIndex];
-      const targetPillWidth = tab.width * PILL_WIDTH_RATIO;
-      const targetPosition = tab.x + (tab.width - targetPillWidth) / 2;
-      
-      Animated.parallel([
-        Animated.spring(pillPosition, {
-          toValue: targetPosition,
-          useNativeDriver: false,
-          tension: 80,
+
+    // Only update visibility if we've scrolled past the threshold
+    if (Math.abs(scrollDiff) > SCROLL_THRESHOLD && currentScrollY > INITIAL_SCROLL_OFFSET) {
+      translateY.stopAnimation();
+      if (scrollDiff > 0) {
+        // Scrolling down - hide buttons
+        Animated.spring(translateY, {
+          toValue: BUTTON_HIDE_OFFSET,
+          useNativeDriver: true,
+          tension: 60,
           friction: 12,
-        }),
-        Animated.spring(pillWidth, {
-          toValue: targetPillWidth,
-          useNativeDriver: false,
-          tension: 80,
+        }).start();
+      } else {
+        // Scrolling up - show buttons
+        Animated.spring(translateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 60,
           friction: 12,
-        }),
-      ]).start();
+        }).start();
+      }
     }
-  }, [activeTabIndex, isLayoutReady, tabMeasurements, pillPosition, pillWidth]);
+  }, [translateY]);
 
   const handleBookmark = useCallback(async () => {
     if (!article) return;
@@ -98,9 +100,10 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
     }
   }, [article, isArticleSaved, saveArticle, removeArticle]);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     if (!article) return;
     
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     try {
       const url = isFullArticle(article) ? article.url : '';
       await Share.share({
@@ -111,48 +114,14 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
     } catch (error) {
       console.error('Error sharing:', error);
     }
-  };
+  }, [article]);
 
-  const handleOpenSource = () => {
+  const handleOpenSource = useCallback(() => {
     if (article && isFullArticle(article) && article.url) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       Linking.openURL(article.url);
     }
-  };
-  
-  // Handler for measuring tab positions (similar to LiquidGlassTabBar)
-  const handleTabLayout = (index: number) => (event: LayoutChangeEvent) => {
-    const { x, width } = event.nativeEvent.layout;
-    setTabMeasurements(prev => {
-      const newMeasurements = [...prev];
-      newMeasurements[index] = { x, width };
-      
-      // Get the total number of tabs (varies based on hasUrl)
-      const totalTabs = hasUrl ? 4 : 3;
-      
-      // Check if all tabs have been measured
-      if (newMeasurements.filter(Boolean).length === totalTabs) {
-        setIsLayoutReady(true);
-        
-        // Initialize pill position to first tab if not set
-        if (!prev.length && newMeasurements[activeTabIndex]) {
-          const tab = newMeasurements[activeTabIndex];
-          const targetPillWidth = tab.width * PILL_WIDTH_RATIO;
-          const targetPosition = tab.x + (tab.width - targetPillWidth) / 2;
-          pillPosition.setValue(targetPosition);
-          pillWidth.setValue(targetPillWidth);
-        }
-      }
-      
-      return newMeasurements;
-    });
-  };
-  
-  // Handle tab press with haptic feedback
-  const handleTabPress = (index: number, action: () => void) => {
-    setActiveTabIndex(index);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    action();
-  };
+  }, [article]);
 
   if (!article) return null;
 
@@ -202,6 +171,8 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
           {/* Hero Image */}
           {article.imgUrl && (
@@ -295,80 +266,75 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           </View>
         </ScrollView>
 
-        {/* Bottom Navigation Bar with Liquid Glass */}
-        <LiquidGlassView 
+        {/* Floating Action Buttons with Liquid Glass */}
+        <Animated.View 
           style={[
-            styles.bottomNavBar,
-            !isLiquidGlassSupported && styles.fallbackBackground,
+            styles.actionButtonsContainer,
+            { transform: [{ translateY }] }
           ]}
-          effect="regular"
         >
-          <View style={styles.tabContainer}>
-            {/* Animated Pill Indicator */}
-            {isLayoutReady && (
-              <Animated.View
-                style={[
-                  styles.pillIndicator,
-                  {
-                    width: pillWidth,
-                    left: pillPosition,
-                  },
-                  !isLiquidGlassSupported && styles.pillFallback,
-                ]}
-              >
-                {isLiquidGlassSupported && (
-                  <LiquidGlassView
-                    style={styles.pillGlass}
-                    effect="clear"
-                  />
-                )}
-              </Animated.View>
-            )}
-            
+          {/* Save Button */}
+          <LiquidGlassView 
+            style={[
+              styles.actionButton,
+              !isLiquidGlassSupported && styles.fallbackBackground,
+            ]}
+            effect="regular"
+          >
             <Pressable 
-              style={styles.navItem} 
-              onPress={() => handleTabPress(0, onClose)} 
-              onLayout={handleTabLayout(0)}
-              accessibilityLabel="Close"
-            >
-              <Ionicons name="close" size={22} color={activeTabIndex === 0 ? colors.accent.primary : colors.primary.text} />
-              <Text style={[styles.navLabel, activeTabIndex === 0 && styles.navLabelActive]}>Close</Text>
-            </Pressable>
-            <Pressable 
-              style={styles.navItem} 
-              onPress={() => handleTabPress(1, handleBookmark)} 
-              onLayout={handleTabLayout(1)}
-              accessibilityLabel="Bookmark"
+              style={styles.actionButtonInner} 
+              onPress={handleBookmark}
+              accessibilityLabel={bookmarked ? 'Remove from saved' : 'Save article'}
             >
               <Ionicons 
                 name={bookmarked ? 'bookmark' : 'bookmark-outline'} 
                 size={22} 
-                color={(activeTabIndex === 1 || bookmarked) ? colors.accent.primary : colors.primary.text} 
+                color={bookmarked ? colors.accent.primary : colors.primary.text} 
               />
-              <Text style={[styles.navLabel, activeTabIndex === 1 && styles.navLabelActive]}>{bookmarked ? 'Saved' : 'Save'}</Text>
+              <Text style={[styles.actionButtonLabel, bookmarked && styles.actionButtonLabelActive]}>
+                {bookmarked ? 'Saved' : 'Save'}
+              </Text>
             </Pressable>
+          </LiquidGlassView>
+
+          {/* Share Button */}
+          <LiquidGlassView 
+            style={[
+              styles.actionButton,
+              !isLiquidGlassSupported && styles.fallbackBackground,
+            ]}
+            effect="regular"
+          >
             <Pressable 
-              style={styles.navItem} 
-              onPress={() => handleTabPress(2, handleShare)} 
-              onLayout={handleTabLayout(2)}
-              accessibilityLabel="Share"
+              style={styles.actionButtonInner} 
+              onPress={handleShare}
+              accessibilityLabel="Share article"
             >
-              <Ionicons name="share-outline" size={22} color={activeTabIndex === 2 ? colors.accent.primary : colors.primary.text} />
-              <Text style={[styles.navLabel, activeTabIndex === 2 && styles.navLabelActive]}>Share</Text>
+              <Ionicons name="share-outline" size={22} color={colors.primary.text} />
+              <Text style={styles.actionButtonLabel}>Share</Text>
             </Pressable>
-            {hasUrl && (
+          </LiquidGlassView>
+
+          {/* Read Full Button - only show if we have a URL */}
+          {hasUrl && (
+            <LiquidGlassView 
+              style={[
+                styles.actionButton,
+                !isLiquidGlassSupported && styles.fallbackBackground,
+              ]}
+              effect="regular"
+            >
               <Pressable 
-                style={styles.navItem} 
-                onPress={() => handleTabPress(3, handleOpenSource)} 
-                onLayout={handleTabLayout(3)}
-                accessibilityLabel="Read Full"
+                style={styles.actionButtonInner} 
+                onPress={handleOpenSource}
+                accessibilityLabel="Read full article"
               >
-                <Ionicons name="open-outline" size={22} color={activeTabIndex === 3 ? colors.accent.primary : colors.primary.text} />
-                <Text style={[styles.navLabel, activeTabIndex === 3 && styles.navLabelActive]}>Read</Text>
+                <Ionicons name="open-outline" size={22} color={colors.accent.primary} />
+                <Text style={[styles.actionButtonLabel, styles.actionButtonLabelActive]}>Read</Text>
               </Pressable>
-            )}
-          </View>
-        </LiquidGlassView>
+            </LiquidGlassView>
+          )}
+        </Animated.View>
       </View>
     </Modal>
   );
@@ -498,55 +464,41 @@ const styles = StyleSheet.create({
     color: colors.primary.background,
   },
 
-  bottomNavBar: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+  // Floating Action Buttons
+  actionButtonsContainer: {
     position: 'absolute',
     bottom: spacing.md,
     left: spacing.lg,
     right: spacing.lg,
-    borderRadius: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  actionButtonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    gap: spacing.xs,
+    minHeight: 44,
+  },
+  actionButtonLabel: {
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500',
+    color: colors.primary.text,
+  },
+  actionButtonLabelActive: {
+    fontWeight: '600',
+    color: colors.accent.primary,
   },
   // Fallback background for devices that don't support liquid glass.
   // Uses the card background color with 85% opacity to mimic the glass effect.
   fallbackBackground: {
     backgroundColor: `${colors.semantic.cardBackground}D9`, // D9 is hex for ~85% opacity
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    position: 'relative',
-  },
-  pillIndicator: {
-    position: 'absolute',
-    top: -PILL_TOP_OFFSET,
-    height: 32,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  pillGlass: {
-    flex: 1,
-    borderRadius: 16,
-  },
-  pillFallback: {
-    backgroundColor: 'rgba(255, 45, 85, 0.15)',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xs,
-    minHeight: 44,
-  },
-  navLabel: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: '500',
-    color: colors.primary.text,
-    marginTop: 2,
-  },
-  navLabelActive: {
-    fontWeight: '600',
-    color: colors.accent.primary,
   },
 });
