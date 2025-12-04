@@ -2,13 +2,11 @@ import { LiquidGlassView, isLiquidGlassSupported } from '@callstack/liquid-glass
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Animated,
   Linking,
   Modal,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   Pressable,
   ScrollView,
   Share,
@@ -21,10 +19,10 @@ import { Article, getTimeAgo } from '../../models';
 import { useSavedArticles } from '../../src/contexts';
 import { SavedArticle } from '../../src/types';
 
-// Configuration constants for scroll-based button hiding
-const SCROLL_THRESHOLD = 10; // Minimum scroll distance to trigger hide/show
-const INITIAL_SCROLL_OFFSET = 50; // Scroll position before hiding starts
-const BUTTON_HIDE_OFFSET = 100; // Distance to translate buttons when hiding
+// Configuration constants for FAB menu
+const FAB_SIZE = 56; // Size of the main FAB button
+const FAB_OPTION_SIZE = 48; // Size of the option buttons
+const FAB_OPTION_SPACING = 12; // Spacing between option buttons
 
 // Type guard to check if article is a full Article
 function isFullArticle(article: Article | SavedArticle): article is Article {
@@ -40,52 +38,32 @@ interface ArticleModalProps {
 export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
   const { isArticleSaved, saveArticle, removeArticle } = useSavedArticles();
   
-  // Animation for hiding/showing action buttons on scroll
-  const translateY = useRef(new Animated.Value(0)).current;
-  const lastScrollY = useRef(0);
+  // State and animation for FAB menu expansion
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuAnimation = useRef(new Animated.Value(0)).current;
   
-  // Handle scroll events to show/hide buttons
-  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentScrollY = event.nativeEvent.contentOffset.y;
-    const scrollDiff = currentScrollY - lastScrollY.current;
+  // Toggle the FAB menu open/closed
+  const toggleMenu = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const toValue = isMenuOpen ? 0 : 1;
+    setIsMenuOpen(!isMenuOpen);
     
-    // Update last scroll position
-    lastScrollY.current = currentScrollY;
-
-    // Always show when at the top
-    if (currentScrollY <= 0) {
-      translateY.stopAnimation();
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 60,
-        friction: 12,
-      }).start();
-      return;
+    Animated.spring(menuAnimation, {
+      toValue,
+      useNativeDriver: true,
+      tension: 80,
+      friction: 10,
+    }).start();
+  }, [isMenuOpen, menuAnimation]);
+  
+  // Close menu when modal closes
+  const handleClose = useCallback(() => {
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      menuAnimation.setValue(0);
     }
-
-    // Only update visibility if we've scrolled past the threshold
-    if (Math.abs(scrollDiff) > SCROLL_THRESHOLD && currentScrollY > INITIAL_SCROLL_OFFSET) {
-      translateY.stopAnimation();
-      if (scrollDiff > 0) {
-        // Scrolling down - hide buttons
-        Animated.spring(translateY, {
-          toValue: BUTTON_HIDE_OFFSET,
-          useNativeDriver: true,
-          tension: 60,
-          friction: 12,
-        }).start();
-      } else {
-        // Scrolling up - show buttons
-        Animated.spring(translateY, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 60,
-          friction: 12,
-        }).start();
-      }
-    }
-  }, [translateY]);
+    onClose();
+  }, [isMenuOpen, menuAnimation, onClose]);
 
   const handleBookmark = useCallback(async () => {
     if (!article) return;
@@ -145,12 +123,12 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <Pressable style={styles.headerButton} onPress={onClose}>
+      <View style={styles.header}>
+          <Pressable style={styles.headerButton} onPress={handleClose}>
             <Ionicons name="close" size={24} color={colors.primary.text} />
           </Pressable>
           <View style={styles.headerActions}>
@@ -171,8 +149,6 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
         >
           {/* Hero Image */}
           {article.imgUrl && (
@@ -249,70 +225,175 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           </View>
         </ScrollView>
 
-        {/* Floating Action Buttons with Liquid Glass */}
-        <Animated.View 
-          style={[
-            styles.actionButtonsContainer,
-            { transform: [{ translateY }] }
-          ]}
-        >
-          {/* Save Button */}
-          <LiquidGlassView 
-            style={[
-              styles.actionButton,
-              !isLiquidGlassSupported && styles.fallbackBackground,
-            ]}
-            effect="regular"
-          >
-            <Pressable 
-              style={styles.actionButtonInner} 
-              onPress={handleBookmark}
-              accessibilityLabel={bookmarked ? 'Remove from saved' : 'Save article'}
-            >
-              <Ionicons 
-                name={bookmarked ? 'bookmark' : 'bookmark-outline'} 
-                size={22} 
-                color={bookmarked ? colors.accent.primary : colors.primary.text} 
-              />
-            </Pressable>
-          </LiquidGlassView>
-
-          {/* Share Button */}
-          <LiquidGlassView 
-            style={[
-              styles.actionButton,
-              !isLiquidGlassSupported && styles.fallbackBackground,
-            ]}
-            effect="regular"
-          >
-            <Pressable 
-              style={styles.actionButtonInner} 
-              onPress={handleShare}
-              accessibilityLabel="Share article"
-            >
-              <Ionicons name="share-outline" size={22} color={colors.primary.text} />
-            </Pressable>
-          </LiquidGlassView>
-
+        {/* Floating Action Button Menu */}
+        <View style={styles.fabContainer}>
+          {/* Option Buttons - appear when menu is open */}
+          
           {/* Read Full Button - only show if we have a URL */}
           {hasUrl && (
+            <Animated.View 
+              style={[
+                styles.fabOptionWrapper,
+                {
+                  transform: [
+                    { 
+                      translateY: menuAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, -(FAB_OPTION_SIZE + FAB_OPTION_SPACING) * 3],
+                      })
+                    },
+                    { 
+                      scale: menuAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 1],
+                      })
+                    },
+                  ],
+                  opacity: menuAnimation,
+                }
+              ]}
+            >
+              <LiquidGlassView 
+                style={[
+                  styles.fabOption,
+                  !isLiquidGlassSupported && styles.fallbackBackground,
+                ]}
+                effect="regular"
+              >
+                <Pressable 
+                  style={styles.fabOptionInner} 
+                  onPress={() => {
+                    handleOpenSource();
+                    toggleMenu();
+                  }}
+                  accessibilityLabel="Read full article"
+                >
+                  <Ionicons name="open-outline" size={24} color={colors.primary.text} />
+                </Pressable>
+              </LiquidGlassView>
+            </Animated.View>
+          )}
+          
+          {/* Share Button */}
+          <Animated.View 
+            style={[
+              styles.fabOptionWrapper,
+              {
+                transform: [
+                  { 
+                    translateY: menuAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -(FAB_OPTION_SIZE + FAB_OPTION_SPACING) * 2],
+                    })
+                  },
+                  { 
+                    scale: menuAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 1],
+                    })
+                  },
+                ],
+                opacity: menuAnimation,
+              }
+            ]}
+          >
             <LiquidGlassView 
               style={[
-                styles.actionButton,
+                styles.fabOption,
                 !isLiquidGlassSupported && styles.fallbackBackground,
               ]}
               effect="regular"
             >
               <Pressable 
-                style={styles.actionButtonInner} 
-                onPress={handleOpenSource}
-                accessibilityLabel="Read full article"
+                style={styles.fabOptionInner} 
+                onPress={() => {
+                  handleShare();
+                  toggleMenu();
+                }}
+                accessibilityLabel="Share article"
               >
-                <Ionicons name="open-outline" size={22} />
+                <Ionicons name="share-outline" size={24} color={colors.primary.text} />
               </Pressable>
             </LiquidGlassView>
-          )}
-        </Animated.View>
+          </Animated.View>
+          
+          {/* Save Button */}
+          <Animated.View 
+            style={[
+              styles.fabOptionWrapper,
+              {
+                transform: [
+                  { 
+                    translateY: menuAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, -(FAB_OPTION_SIZE + FAB_OPTION_SPACING)],
+                    })
+                  },
+                  { 
+                    scale: menuAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 1],
+                    })
+                  },
+                ],
+                opacity: menuAnimation,
+              }
+            ]}
+          >
+            <LiquidGlassView 
+              style={[
+                styles.fabOption,
+                !isLiquidGlassSupported && styles.fallbackBackground,
+              ]}
+              effect="regular"
+            >
+              <Pressable 
+                style={styles.fabOptionInner} 
+                onPress={() => {
+                  handleBookmark();
+                  toggleMenu();
+                }}
+                accessibilityLabel={bookmarked ? 'Remove from saved' : 'Save article'}
+              >
+                <Ionicons 
+                  name={bookmarked ? 'bookmark' : 'bookmark-outline'} 
+                  size={24} 
+                  color={bookmarked ? colors.accent.primary : colors.primary.text} 
+                />
+              </Pressable>
+            </LiquidGlassView>
+          </Animated.View>
+          
+          {/* Main FAB Button */}
+          <LiquidGlassView 
+            style={[
+              styles.fab,
+              !isLiquidGlassSupported && styles.fallbackBackground,
+            ]}
+            effect="regular"
+          >
+            <Pressable 
+              style={styles.fabInner} 
+              onPress={toggleMenu}
+              accessibilityLabel={isMenuOpen ? 'Close options menu' : 'Open options menu'}
+            >
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate: menuAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '45deg'],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <Ionicons name="add" size={28} color={colors.primary.text} />
+              </Animated.View>
+            </Pressable>
+          </LiquidGlassView>
+        </View>
       </View>
     </Modal>
   );
@@ -442,37 +523,40 @@ const styles = StyleSheet.create({
     color: colors.primary.background,
   },
 
-  // Floating Action Buttons
-  actionButtonsContainer: {
+  // Floating Action Button (FAB) Menu
+  fabContainer: {
     position: 'absolute',
-    bottom: spacing.md,
-    left: spacing.lg,
+    bottom: spacing.lg,
     right: spacing.lg,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: spacing.sm,
+    alignItems: 'center',
   },
-  actionButton: {
-    borderRadius: 20,
+  fab: {
+    width: FAB_SIZE,
+    height: FAB_SIZE,
+    borderRadius: FAB_SIZE / 2,
     overflow: 'hidden',
   },
-  actionButtonInner: {
-    flexDirection: 'row',
+  fabInner: {
+    width: FAB_SIZE,
+    height: FAB_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    gap: spacing.xs,
-    minHeight: 44,
   },
-  actionButtonLabel: {
-    fontSize: typography.caption.fontSize,
-    fontWeight: '500',
-    color: colors.primary.text,
+  fabOptionWrapper: {
+    position: 'absolute',
+    bottom: 0,
   },
-  actionButtonLabelActive: {
-    fontWeight: '600',
-    color: colors.accent.primary,
+  fabOption: {
+    width: FAB_OPTION_SIZE,
+    height: FAB_OPTION_SIZE,
+    borderRadius: FAB_OPTION_SIZE / 2,
+    overflow: 'hidden',
+  },
+  fabOptionInner: {
+    width: FAB_OPTION_SIZE,
+    height: FAB_OPTION_SIZE,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // Fallback background for devices that don't support liquid glass.
   // Uses the card background color with 85% opacity to mimic the glass effect.
