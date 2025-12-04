@@ -186,9 +186,12 @@ export function LiquidGlassTabBar() {
   const currentRoute = PATHNAME_TO_ROUTE[pathname] || '/';
 
   const handleTabPress = useCallback((route: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.navigate(route as never);
-  }, [router]);
+    // Only trigger haptic feedback and navigate if not already on this route
+    if (route !== currentRoute) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      router.navigate(route as never);
+    }
+  }, [router, currentRoute]);
 
   const bottomPadding = Math.max(insets.bottom, 16);
 

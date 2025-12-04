@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect, ReactNode } from 'react';
 
 // Configuration constants for scroll behavior
 const SCROLL_THRESHOLD = 10; // Minimum scroll distance to trigger hide/show
@@ -21,6 +21,15 @@ export function TabBarVisibilityProvider({ children }: TabBarVisibilityProviderP
   const lastScrollY = useRef(0);
   const scrollStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isScrolling = useRef(false);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollStopTimer.current) {
+        clearTimeout(scrollStopTimer.current);
+      }
+    };
+  }, []);
 
   const handleScroll = useCallback((event: { nativeEvent: { contentOffset: { y: number } } }) => {
     const currentScrollY = event.nativeEvent.contentOffset.y;
