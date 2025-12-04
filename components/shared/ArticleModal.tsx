@@ -1,20 +1,21 @@
+import { Ionicons } from '@expo/vector-icons';
+import { GlassView } from 'expo-glass-effect';
+import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image';
 import React, { useCallback } from 'react';
 import {
+  Linking,
   Modal,
+  Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
-  View,
-  Pressable,
-  Share,
-  Linking,
+  View
 } from 'react-native';
-import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { useSavedArticles } from '../../src/contexts';
-import { colors, spacing, typography, borderRadius, sizes, layout } from '../../lib/constants';
+import { borderRadius, colors, layout, sizes, spacing, typography } from '../../lib/constants';
 import { Article, getTimeAgo } from '../../models';
+import { useSavedArticles } from '../../src/contexts';
 import { SavedArticle } from '../../src/types';
 
 // Type guard to check if article is a full Article
@@ -95,7 +96,6 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
           <Pressable style={styles.headerButton} onPress={onClose}>
             <Ionicons name="close" size={24} color={colors.primary.text} />
           </Pressable>
-          
           <View style={styles.headerActions}>
             <Pressable style={styles.headerButton} onPress={handleBookmark}>
               <Ionicons
@@ -206,6 +206,28 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
             )}
           </View>
         </ScrollView>
+
+        {/* Bottom Navigation Bar */}
+        <GlassView style={styles.bottomNavBar} isInteractive>
+          <Pressable style={styles.navItem} onPress={onClose} accessibilityLabel="Close">
+            <Ionicons name="close" size={22} color={colors.primary.text} />
+            <Text style={styles.navLabel}>Close</Text>
+          </Pressable>
+          <Pressable style={styles.navItem} onPress={handleBookmark} accessibilityLabel="Bookmark">
+            <Ionicons name={bookmarked ? 'bookmark' : 'bookmark-outline'} size={22} color={bookmarked ? colors.accent.primary : colors.primary.text} />
+            <Text style={styles.navLabel}>{bookmarked ? 'Saved' : 'Save'}</Text>
+          </Pressable>
+          <Pressable style={styles.navItem} onPress={handleShare} accessibilityLabel="Share">
+            <Ionicons name="share-outline" size={22} color={colors.primary.text} />
+            <Text style={styles.navLabel}>Share</Text>
+          </Pressable>
+          {hasUrl && (
+            <Pressable style={styles.navItem} onPress={handleOpenSource} accessibilityLabel="Read Full">
+              <Ionicons name="open-outline" size={22} color={colors.accent.primary} />
+              <Text style={styles.navLabel}>Read</Text>
+            </Pressable>
+          )}
+        </GlassView>
       </View>
     </Modal>
   );
@@ -333,5 +355,29 @@ const styles = StyleSheet.create({
     fontSize: typography.body.fontSize,
     fontWeight: '600',
     color: colors.primary.background,
+  },
+
+  bottomNavBar: {
+    flexDirection: 'row',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+
+    position: 'absolute',
+    bottom: spacing.md,
+    left: spacing.lg,
+    right: spacing.lg,
+    borderRadius: 50,
+    
+  },
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.xs,
+  },
+  navLabel: {
+    fontSize: typography.caption.fontSize,
+    color: colors.primary.text,
+    marginTop: 2,
   },
 });

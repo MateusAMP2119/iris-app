@@ -1,6 +1,6 @@
 import * as Haptics from 'expo-haptics';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -11,8 +11,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Article, getTimeAgo } from '../../models';
-import { ArticleModal, EmptyState, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
+import { ArticleModal, EmptyState, FeaturedCard, LoadingIndicator, NewsCard, SectionHeader, SwipeableTabWrapper } from '../../components';
 import { colors, layout, spacing, typography } from '../../lib/constants';
 import { Article, getTimeAgo } from '../../models';
 import { useSavedArticles, useTabBarVisibility } from '../../src/contexts';
