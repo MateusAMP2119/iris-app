@@ -67,6 +67,7 @@ export function NewsCard({
     : screenWidth - spacing.md * 2;
 
   const imageHeight = featured ? 200 : compact ? 100 : 180;
+  const cardHeight = featured ? 350 : undefined;
 
   return (
     <AnimatedPressable
@@ -74,6 +75,7 @@ export function NewsCard({
         styles.card,
         animatedStyle,
         { width: compact ? cardWidth : '100%' },
+        cardHeight ? { height: cardHeight } : undefined,
       ]}
       onPress={onPress}
       onPressIn={handlePressIn}
