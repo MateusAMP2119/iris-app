@@ -14,14 +14,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTabBarVisibility } from '../../src/contexts';
 import { colors, sizes, animations } from '../../lib/constants';
 
-// Only import GlassEffectContainer on iOS
+// Only import GlassEffectContainer and Host on iOS
 let GlassEffectContainer: React.ComponentType<{ children: React.ReactNode; spacing?: number }> | null = null;
+let Host: React.ComponentType<{ children: React.ReactNode; matchContents?: boolean }> | null = null;
 if (Platform.OS === 'ios') {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    GlassEffectContainer = require('@expo/ui/swift-ui').GlassEffectContainer;
+    const swiftUI = require('@expo/ui/swift-ui');
+    GlassEffectContainer = swiftUI.GlassEffectContainer;
+    Host = swiftUI.Host;
   } catch {
-    // If import fails, GlassEffectContainer will be null
+    // If import fails, components will be null
   }
 }
 
@@ -222,10 +225,12 @@ export function LiquidGlassTabBar() {
       ]}
       pointerEvents={isVisible ? 'auto' : 'none'}
     >
-      {Platform.OS === 'ios' && GlassEffectContainer ? (
-        <GlassEffectContainer spacing={8}>
-          {renderButtons()}
-        </GlassEffectContainer>
+      {Platform.OS === 'ios' && GlassEffectContainer && Host ? (
+        <Host matchContents>
+          <GlassEffectContainer spacing={8}>
+            {renderButtons()}
+          </GlassEffectContainer>
+        </Host>
       ) : (
         renderButtons()
       )}
