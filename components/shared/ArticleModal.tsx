@@ -340,7 +340,11 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
               onLayout={handleTabLayout(1)}
               accessibilityLabel="Bookmark"
             >
-              <Ionicons name={bookmarked ? 'bookmark' : 'bookmark-outline'} size={22} color={activeTabIndex === 1 ? colors.accent.primary : (bookmarked ? colors.accent.primary : colors.primary.text)} />
+              <Ionicons 
+                name={bookmarked ? 'bookmark' : 'bookmark-outline'} 
+                size={22} 
+                color={(activeTabIndex === 1 || bookmarked) ? colors.accent.primary : colors.primary.text} 
+              />
               <Text style={[styles.navLabel, activeTabIndex === 1 && styles.navLabelActive]}>{bookmarked ? 'Saved' : 'Save'}</Text>
             </Pressable>
             <Pressable 
@@ -359,7 +363,7 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
                 onLayout={handleTabLayout(3)}
                 accessibilityLabel="Read Full"
               >
-                <Ionicons name="open-outline" size={22} color={activeTabIndex === 3 ? colors.accent.primary : colors.accent.primary} />
+                <Ionicons name="open-outline" size={22} color={activeTabIndex === 3 ? colors.accent.primary : colors.primary.text} />
                 <Text style={[styles.navLabel, activeTabIndex === 3 && styles.navLabelActive]}>Read</Text>
               </Pressable>
             )}
