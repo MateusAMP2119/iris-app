@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   imagePlaceholder: {
     width: '100%',
-    height: 150,
+    height: 200,
     backgroundColor: colors.secondary.gray100,
     justifyContent: 'center',
     alignItems: 'center',
