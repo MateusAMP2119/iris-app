@@ -246,23 +246,6 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
             {hasContent && isFullArticle(article) && (
               <Text style={styles.bodyText}>{article.content}</Text>
             )}
-
-            {/* Read More Button - only show if we have a URL */}
-            {hasUrl && (
-              <Pressable 
-                style={styles.readMoreButton} 
-                onPress={handleOpenSource}
-                accessibilityRole="button"
-                accessibilityLabel="Read full article"
-              >
-                <Text style={styles.readMoreText}>Read full article</Text>
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color={colors.primary.background}
-                />
-              </Pressable>
-            )}
           </View>
         </ScrollView>
 
@@ -291,9 +274,6 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
                 size={22} 
                 color={bookmarked ? colors.accent.primary : colors.primary.text} 
               />
-              <Text style={[styles.actionButtonLabel, bookmarked && styles.actionButtonLabelActive]}>
-                {bookmarked ? 'Saved' : 'Save'}
-              </Text>
             </Pressable>
           </LiquidGlassView>
 
@@ -311,7 +291,6 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
               accessibilityLabel="Share article"
             >
               <Ionicons name="share-outline" size={22} color={colors.primary.text} />
-              <Text style={styles.actionButtonLabel}>Share</Text>
             </Pressable>
           </LiquidGlassView>
 
@@ -329,8 +308,7 @@ export function ArticleModal({ article, visible, onClose }: ArticleModalProps) {
                 onPress={handleOpenSource}
                 accessibilityLabel="Read full article"
               >
-                <Ionicons name="open-outline" size={22} color={colors.accent.primary} />
-                <Text style={[styles.actionButtonLabel, styles.actionButtonLabelActive]}>Read</Text>
+                <Ionicons name="open-outline" size={22} />
               </Pressable>
             </LiquidGlassView>
           )}
